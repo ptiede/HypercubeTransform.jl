@@ -46,7 +46,7 @@ function sourceHform(_data=NamedTuple())
         wrap(kernel) = Soss.@q begin
             _result=NamedTuple()
             $kernel
-            HyperCubeTransform(_result)
+            $ascube(_result)
         end
 
         Soss.buildSource(_m, proc, wrap) |> Soss.MacroTools.flatten
@@ -54,16 +54,8 @@ function sourceHform(_data=NamedTuple())
 end
 
 
-
-function hform(d, _data::NamedTuple)
-    if hasmethod(Dists.quantile, (typeof(d),))
-        return HyperCubeTransform(d,1)
-    end
-
-    error("Not implemented:\nhform($d)")
-end
-
 hform(d, _data) = nothing
+hform(d::Union{Dists.Distribution, MT.AbstractMeasure}, _data) = d
 
 
 Soss.@gg function _hform(M::Type{<:Soss.TypeLevel},
@@ -75,19 +67,4 @@ Soss.@gg function _hform(M::Type{<:Soss.TypeLevel},
     Soss.@under_global Soss.from_type(Soss._unwrap_type(M)) Soss.@q let M
         $body
     end
-end
-
-function hform(d::Dists.Distribution{Dists.Univariate}, _data::NamedTuple=NamedTuple())
-    return HyperCubeTransform(d,1)
-end
-
-function hform(d::Dists.Product, _data::NamedTuple=NamedTuple())
-    n = length(d)
-    return HyperCubeTransform(d,n)
-end
-
-function hform(d::ProductMeasure, _data::NamedTuple)
-    dist = Dists.Product([d.f(i) for i in d.pars])
-    n = length(d)
-    return HyperCubeTransform(dist, n)
 end
