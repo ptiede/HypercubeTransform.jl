@@ -1,8 +1,8 @@
-abstract type AbstractHyperCubeTransform end
+abstract type AbstractHypercubeTransform end
 
 
 """
-    `$(FUNCTIONNAME)(c::AbstractHyperCubeTransform)`
+    `$(FUNCTIONNAME)(c::AbstractHypercubeTransform)`
 Returns the dimension of the hypercube transform.
 """
 function dimension end
@@ -16,7 +16,7 @@ when construct the transformation.
 There are a few different behaviors depending on the type of the object.
 
  - If `c::Distribution` then this will store the distributions.
- - If `c::Tuple{AbstractHyperCubeTransform}` then this will store the tuple
+ - If `c::Tuple{AbstractHypercubeTransform}` then this will store the tuple
 
 # Examples
 ```julia
@@ -29,7 +29,7 @@ ascube( (α = Uniform(), β = Normal()) )
 function ascube end
 
 """
-    `$(FUNCTIONNAME)(c::AbstractHyperCubeTransform, p)`
+    `$(FUNCTIONNAME)(c::AbstractHypercubeTransform, p)`
 Transforms from the hypercube with coordinates `p`, to the parameter space
 defined by the transformation `c`.
 
@@ -45,7 +45,7 @@ no custom transformation exists then an error will be raised.
 function transform end
 
 
-struct ScalarHC{D} <: AbstractHyperCubeTransform
+struct ScalarHC{D} <: AbstractHypercubeTransform
     dist::D
     ScalarHC(d) = new{typeof(d)}(d)
 end
@@ -65,15 +65,15 @@ ascube(d::Dists.UnivariateDistribution) = ScalarHC(d)
     $(SIGNATURES)
 Computes the transformation from the unit hypercube to the distribution space.
 """
-function transform(c::AbstractHyperCubeTransform, x)
+function transform(c::AbstractHypercubeTransform, x)
     return _transform(has_quantile(c), c, x)
 end
 
-function _transform(::HasQuant, c::AbstractHyperCubeTransform, x)
+function _transform(::HasQuant, c::AbstractHypercubeTransform, x)
     return quantile(dist(c), x)
 end
 
-function _transform(::NoQuant, c::AbstractHyperCubeTransform, x)
+function _transform(::NoQuant, c::AbstractHypercubeTransform, x)
     throw("No quantile for distribution $(c.dist), implement transform manually")
 end
 
@@ -82,7 +82,7 @@ function _step_transform(c::ScalarHC, x::AbstractVector, index)
 end
 
 
-abstract type VectorHC <: AbstractHyperCubeTransform end
+abstract type VectorHC <: AbstractHypercubeTransform end
 
 function transform(c::VectorHC, x::AbstractVector)
     return first(_step_transform(c, x, firstindex(x)))

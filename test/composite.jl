@@ -1,6 +1,6 @@
 import Distributions as Dists
 import MeasureTheory as MT
-using HyperCubeTransform
+using HypercubeTransform
 using Test
 
 

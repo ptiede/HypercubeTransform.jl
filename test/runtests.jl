@@ -1,11 +1,11 @@
 using Soss
-using HyperCubeTransform
+using HypercubeTransform
 import Distributions as Dists
 import MeasureTheory as MT
 
 using Test
 
-@testset "HyperCubeTransform.jl" begin
+@testset "HypercubeTransform.jl" begin
     # Write your tests here.
     tests = [
         "transform",

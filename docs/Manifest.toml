@@ -24,7 +24,7 @@ git-tree-sha1 = "350dced36c11f794c6c4da5dc6493ec894e50c16"
 uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 version = "0.27.5"
 
-[[HyperCubeTransform]]
+[[HypercubeTransform]]
 path = ".."
 uuid = "9ec9aee3-0fd3-44c2-8e61-a50acc66f3c8"
 version = "0.1.0"

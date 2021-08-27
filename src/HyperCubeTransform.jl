@@ -1,4 +1,4 @@
-module HyperCubeTransform
+module HypercubeTransform
 
 using Requires: @require
 import Distributions as Dists
@@ -9,7 +9,7 @@ using GeneralizedGenerated
 using Tricks: static_hasmethod
 using DocStringExtensions
 
-export transform, HyperCubeTransform, dimension, ascube
+export transform, HypercubeTransform, dimension, ascube
 
 include("utility.jl")
 include("transform.jl")

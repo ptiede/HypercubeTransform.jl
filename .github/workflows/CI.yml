@@ -54,9 +54,9 @@ jobs:
       - run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
-            using HyperCubeTransform
-            DocMeta.setdocmeta!(HyperCubeTransform, :DocTestSetup, :(using HyperCubeTransform); recursive=true)
-            doctest(HyperCubeTransform)'
+            using HypercubeTransform
+            DocMeta.setdocmeta!(HypercubeTransform, :DocTestSetup, :(using HypercubeTransform); recursive=true)
+            doctest(HypercubeTransform)'
       - run: julia --project=docs docs/make.jl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

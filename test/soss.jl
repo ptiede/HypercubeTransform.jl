@@ -1,5 +1,5 @@
 using Soss
-using HyperCubeTransform
+using HypercubeTransform
 import Distributions as Dists
 import MeasureTheory as MT
 using Test
