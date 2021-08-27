@@ -1,69 +1,76 @@
 using .Soss
+using .Soss: ConditionalModel, getmoduletypencoding, argvals, observations,
+             Assign, Return, LineNumber, Sample, testvalue, @q, type2model,
+             loadvals, getntkeys, buildSource, isleaf, _unwrap_type
+using NestedTuples
+using MacroTools
 
-ascube(m::Soss.ConditionalModel{A, B}, _data::NamedTuple) where {A,B} = ascube(m | _data)
+ascube(m::ConditionalModel{A, B}, _data::NamedTuple) where {A,B} = ascube(m | _data)
 
-
-"""
-    ascube(m::Soss.ConditionalModel)
-Create the hypercube transform from Soss models that moves from the
-unit hypercube to the model parameter space. To transform use the transform function
-"""
-function ascube(m::Soss.ConditionalModel{A,B}) where {A,B}
-    return _ascube(Soss.getmoduletypencoding(m),
-                  Soss.Model(m),
-                  Soss.argvals(m),
-                  Soss.observations(m)
-                  )
+function ascube(m::ConditionalModel{A, B}) where {A,B}
+    return _ascube(getmoduletypencoding(m), Model(m), argvals(m), observations(m))
 end
+
+# function ascube(m::Model{EmptyNTtype, B}) where {B}
+#     return ascube(m,NamedTuple())
+# end
+
+
+export sourceascube
 
 sourceascube(m::Model) = sourceascube()(m)
 
 function sourceascube(_data=NamedTuple())
-    function (_m::Model)
-        _datakeys = Soss.getntkeys(_data)
-        proc(_m, st::Soss.Assign) = :($(st.x) = $(st.rhs))
-        proc(_m, st::Soss.Return) = nothing
-        proc(_m, st::Soss.LineNumber) = nothing
+    function(_m::Model)
 
-        function proc(_m, st::Soss.Sample)
+        _datakeys = getntkeys(_data)
+        proc(_m, st::Assign)        = :($(st.x) = $(st.rhs))
+        proc(_m, st::Return)     = nothing
+        proc(_m, st::LineNumber) = nothing
+
+        function proc(_m, st::Sample)
             x = st.x
             xname = QuoteNode(x)
             rhs = st.rhs
 
-            thecode = Soss.@q begin
-                _t = ascube($rhs, get(_data, $xname, NamedTuple()))
+            thecode = @q begin
+                _t = HypercubeTransform.ascube($rhs, get(_data, $xname, NamedTuple()))
                 if !isnothing(_t)
                     _result = merge(_result, ($x=_t,))
                 end
             end
 
-            Soss.isleaf(_m, st.x) || pushfirst!(thecode.args, :($x = Soss.testvalue($rhs)))
+            # Non-leaves might be referenced later, so we need to be sure they
+            # have a value
+            isleaf(_m, st.x) || pushfirst!(thecode.args, :($x = Soss.testvalue($rhs)))
 
             return thecode
         end
 
-        wrap(kernel) = Soss.@q begin
-            _result=NamedTuple()
+
+        wrap(kernel) = @q begin
+            _result = NamedTuple()
             $kernel
             $ascube(_result)
         end
 
-        Soss.buildSource(_m, proc, wrap) |> Soss.MacroTools.flatten
+        buildSource(_m, proc, wrap) |> MacroTools.flatten
+
     end
 end
 
 
 ascube(d, _data) = nothing
-ascube(d::Union{Dists.Distribution, MT.AbstractMeasure}, _data=NamedTuple()) = ascube(d)
 
+ascube(μ::MT.AbstractMeasure,  _data::NamedTuple=NamedTuple()) = ascube(μ)
+ascube(μ::Dists.Distribution,  _data::NamedTuple=NamedTuple()) = ascube(μ)
 
-Soss.@gg function _ascube(M::Type{<:Soss.TypeLevel},
-                         _m::Model{Asub,B},
-                         _args::A,
-                         _data) where {Asub, A,B}
+ascube(d::Dists.AbstractMvNormal, _data::NamedTuple=NamedTuple()) = ascube(d)
+#ascube(::NamedTuple{(), Tuple{}}) = nothing
 
-    body = Soss.type2model(_m) |> sourceascube(_data) |> Soss.loadvals(_args, _data)
-    Soss.@under_global Soss.from_type(Soss._unwrap_type(M)) Soss.@q let M
+@gg function _ascube(M::Type{<:GeneralizedGenerated.TypeLevel}, _m::Model{Asub,B}, _args::A, _data) where {Asub,A,B}
+    body = type2model(_m) |> sourceascube(_data) |> loadvals(_args, _data)
+    @under_global from_type(_unwrap_type(M)) @q let M
         $body
     end
 end

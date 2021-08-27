@@ -19,10 +19,10 @@ using Test
         y ~ Dists.Normal(z)
     end
 
-    h2 = hform(m2(m1=m1()))
-    h1 = hform(m1())
+    h2 = ascube(m2(m1=m1(),)|(y=1.0,))
+    h1 = ascube(m1())
     @test dimension(h2) == dimension(h1)
-    pos = [0.5, 0.5, 0.5]
+    pos = [0.5, 0.5, 0.5, 0.5]
     @test transform(h1, pos) == transform(h2, pos)[1]
     @inferred transform(h2, pos)
 end
