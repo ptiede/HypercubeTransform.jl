@@ -1,7 +1,9 @@
 using Soss
 using HypercubeTransform
-import Distributions as Dists
-import MeasureTheory as MT
+import Distributions
+const Dists = Distributions
+import MeasureTheory
+const MT = MeasureTheory
 
 using Test
 

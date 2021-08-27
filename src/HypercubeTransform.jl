@@ -1,9 +1,11 @@
 module HypercubeTransform
 
 using Requires: @require
-import Distributions as Dists
+import Distributions
+const Dists = Distributions
 using Distributions: quantile
-import MeasureTheory as MT
+import MeasureTheory
+const MT = MeasureTheory
 using MLStyle
 using GeneralizedGenerated
 using Tricks: static_hasmethod
