@@ -1,4 +1,4 @@
-# HyperCubeTransform
+# HypercubeTransform
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ptiede.github.io/HyperCubeTransform.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://ptiede.github.io/HyperCubeTransform.jl/dev)
