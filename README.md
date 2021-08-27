@@ -9,3 +9,16 @@
 
 We love to use nested sampling with the EHT, but it is rather annoying to constantly write the prior transformation. This package will do that for you. It does this by first looking at the types of the 
 distribution and constructing a transformation function. This also can be automated with Soss.jl.
+
+
+**MORE TO COME**
+
+## Example
+```julia
+using Distributions
+using HypercubeTransform
+priors = (a=Normal(0.0 ,5.0), b = Uniform(-10.0, 10.0), c=Product([Cauchy(), Gamma()]))
+hc = ascube(priors)
+
+transform(hc, rand(length(priors)))
+```
