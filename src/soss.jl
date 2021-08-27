@@ -1,25 +1,24 @@
 using .Soss
 
-export hform
-hform(m::Soss.ConditionalModel{A, B}, _data::NamedTuple) where {A,B} = hform(m | _data)
+ascube(m::Soss.ConditionalModel{A, B}, _data::NamedTuple) where {A,B} = ascube(m | _data)
 
 
 """
-    hform(m)
+    ascube(m::Soss.ConditionalModel)
 Create the hypercube transform from Soss models that moves from the
 unit hypercube to the model parameter space. To transform use the transform function
 """
-function hform(m::Soss.ConditionalModel{A,B}) where {A,B}
-    return _hform(Soss.getmoduletypencoding(m),
+function ascube(m::Soss.ConditionalModel{A,B}) where {A,B}
+    return _ascube(Soss.getmoduletypencoding(m),
                   Soss.Model(m),
                   Soss.argvals(m),
                   Soss.observations(m)
                   )
 end
 
-sourceHform(m::Model) = sourceHform()(m)
+sourceascube(m::Model) = sourceascube()(m)
 
-function sourceHform(_data=NamedTuple())
+function sourceascube(_data=NamedTuple())
     function (_m::Model)
         _datakeys = Soss.getntkeys(_data)
         proc(_m, st::Soss.Assign) = :($(st.x) = $(st.rhs))
@@ -32,7 +31,7 @@ function sourceHform(_data=NamedTuple())
             rhs = st.rhs
 
             thecode = Soss.@q begin
-                _t = hform($rhs, get(_data, $xname, NamedTuple()))
+                _t = ascube($rhs, get(_data, $xname, NamedTuple()))
                 if !isnothing(_t)
                     _result = merge(_result, ($x=_t,))
                 end
@@ -54,16 +53,16 @@ function sourceHform(_data=NamedTuple())
 end
 
 
-hform(d, _data) = nothing
-hform(d::Union{Dists.Distribution, MT.AbstractMeasure}, _data) = d
+ascube(d, _data) = nothing
+ascube(d::Union{Dists.Distribution, MT.AbstractMeasure}, _data=NamedTuple()) = ascube(d)
 
 
-Soss.@gg function _hform(M::Type{<:Soss.TypeLevel},
+Soss.@gg function _ascube(M::Type{<:Soss.TypeLevel},
                          _m::Model{Asub,B},
                          _args::A,
                          _data) where {Asub, A,B}
 
-    body = Soss.type2model(_m) |> sourceHform(_data) |> Soss.loadvals(_args, _data)
+    body = Soss.type2model(_m) |> sourceascube(_data) |> Soss.loadvals(_args, _data)
     Soss.@under_global Soss.from_type(Soss._unwrap_type(M)) Soss.@q let M
         $body
     end

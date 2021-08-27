@@ -16,6 +16,7 @@ using Test
 
     m2 = @model m1 begin
         z ~ m1
+        y ~ Dists.Normal(z)
     end
 
     h2 = hform(m2(m1=m1()))
