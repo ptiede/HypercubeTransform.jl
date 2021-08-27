@@ -1,3 +1,5 @@
 [deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+MeasureTheory = "eadaa1a4-d27c-401d-8699-e962e1bbc33b"
 Soss = "8ce77f84-9b61-11e8-39ff-d17a774bf41c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

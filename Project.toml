@@ -13,7 +13,6 @@ Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 Tricks = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 
 [compat]
-julia = "1.5"
 Distributions = "0.24,0.25"
 DocStringExtensions = "0.7,0.8"
 GeneralizedGenerated = "0.3"
@@ -21,6 +20,7 @@ MLStyle = "0.4"
 MeasureTheory = "0.10,0.11"
 Requires = "1"
 Tricks = "0.1"
+julia = "1.5"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

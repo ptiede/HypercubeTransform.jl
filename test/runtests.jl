@@ -1,5 +1,8 @@
 using Soss
 using HyperCubeTransform
+import Distributions as Dists
+import MeasureTheory as MT
+
 using Test
 
 @testset "HyperCubeTransform.jl" begin
