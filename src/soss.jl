@@ -4,7 +4,6 @@ using .Soss: ConditionalModel, getmoduletypencoding, argvals, observations,
              loadvals, getntkeys, buildSource, isleaf, _unwrap_type
 using NestedTuples
 using MacroTools
-
 ascube(m::ConditionalModel{A, B}, _data::NamedTuple) where {A,B} = ascube(m | _data)
 
 function ascube(m::ConditionalModel{A, B}) where {A,B}
@@ -14,6 +13,16 @@ end
 # function ascube(m::Model{EmptyNTtype, B}) where {B}
 #     return ascube(m,NamedTuple())
 # end
+
+ascube(d, _data) = nothing
+
+ascube(μ::MT.AbstractMeasure,  _data::NamedTuple=NamedTuple()) = ascube(μ)
+ascube(μ::Dists.Distribution,  _data::NamedTuple=NamedTuple()) = ascube(μ)
+
+ascube(d::Dists.AbstractMvNormal, _data::NamedTuple=NamedTuple()) = ascube(d)
+#ascube(::NamedTuple{(), Tuple{}}) = nothing
+
+
 
 
 export sourceascube
@@ -34,7 +43,7 @@ function sourceascube(_data=NamedTuple())
             rhs = st.rhs
 
             thecode = @q begin
-                _t = HypercubeTransform.ascube($rhs, get(_data, $xname, NamedTuple()))
+                _t = ascube($rhs, get(_data, $xname, NamedTuple()))
                 if !isnothing(_t)
                     _result = merge(_result, ($x=_t,))
                 end
@@ -58,15 +67,6 @@ function sourceascube(_data=NamedTuple())
 
     end
 end
-
-
-ascube(d, _data) = nothing
-
-ascube(μ::MT.AbstractMeasure,  _data::NamedTuple=NamedTuple()) = ascube(μ)
-ascube(μ::Dists.Distribution,  _data::NamedTuple=NamedTuple()) = ascube(μ)
-
-ascube(d::Dists.AbstractMvNormal, _data::NamedTuple=NamedTuple()) = ascube(d)
-#ascube(::NamedTuple{(), Tuple{}}) = nothing
 
 @gg function _ascube(M::Type{<:GeneralizedGenerated.TypeLevel}, _m::Model{Asub,B}, _args::A, _data) where {Asub,A,B}
     body = type2model(_m) |> sourceascube(_data) |> loadvals(_args, _data)

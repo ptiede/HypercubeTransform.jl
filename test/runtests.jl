@@ -1,4 +1,4 @@
-using Soss
+#using Soss
 using HypercubeTransform
 import Distributions
 const Dists = Distributions
@@ -12,7 +12,7 @@ using Test
     tests = [
         "transform",
         "composite",
-        "soss"
+        #"soss"
     ]
     res = map(tests) do t
         @eval module $(Symbol("Test_", t))
