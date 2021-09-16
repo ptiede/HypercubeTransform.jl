@@ -1,5 +1,6 @@
 import Distributions
 const Dists = Distributions
+using Distributions: mean
 import MeasureTheory
 const MT = MeasureTheory
 using HypercubeTransform
@@ -39,13 +40,13 @@ end
     a = Dists.Normal()
     dc = ascube(d)
     @inferred transform(dc, [0.5, 0.5, 0.5])
-    p = rand(3, 1_000_000)
+    p = rand(3, 10_000_000)
     x = transform.(Ref(dc), eachcol(p))
     @test isapprox(mean(x), mean(d), atol=1e-3)
 
     dad = ascube((a, d))
     @inferred transform(dad, [0.5,0.5,0.5,0.5])
-    pad = rand(4, 1_000_000)
+    pad = rand(4, 10_000_000)
     xad = transform.(Ref(dad), eachcol(pad))
     mN = mean(first.(xad))
     mD = mean(last.(xad))
