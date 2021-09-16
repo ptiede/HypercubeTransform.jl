@@ -113,6 +113,19 @@ function _step_transform(h::ArrayHC{<:Dists.Product, M}, p::AbstractVector, inde
     return out, index+dimension(h)
 end
 
+
+function _step_transform(h::ArrayHC{<:Dists.Dirichlet, M}, p::AbstractVector, index) where {M}
+    out  = Vector{eltype(p)}(undef, dimension(h))
+    d = dist(h)
+    α = d.alpha
+    tot = zero(eltype(p))
+    for i in 1:dimension(h)
+        out[i] = quantile(Dists.Gamma(α[i],1), p[index-1+i])
+        tot += out[i]
+    end
+    return out./tot, index+dimension(h)
+end
+
 ascube(d::MT.ProductMeasure) = ArrayHC(d)
 
 
