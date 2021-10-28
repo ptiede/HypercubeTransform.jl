@@ -132,8 +132,8 @@ ascube(d::MT.ProductMeasure) = ArrayHC(d)
 function _step_transform(h::ArrayHC{<:MT.ProductMeasure,M}, p::AbstractVector, index) where {M}
     out = Vector{eltype(p)}(undef, dimension(h))
     m = MT.marginals(dist(h))
-    for i in 1:dimension(h)
-        out[i] = first(_step_transform(ascube(m[i]), p, index-1+i))
+    for (i,mi) in enumerate(m)
+        out[i] = first(_step_transform(ascube(mi), p, index-1+i))
     end
     return out, index+dimension(h)
 end
