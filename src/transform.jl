@@ -104,7 +104,6 @@ ascube(d::Union{Dists.MultivariateDistribution,Dists.Matrixvariate}) = ArrayHC(d
 dist(d::ArrayHC) = d.dist
 
 
-
 function _step_transform(h::ArrayHC{<:Dists.Product, M}, p::AbstractVector, index) where {M}
     out = Vector{eltype(p)}(undef, dimension(h))
     for i in 1:dimension(h)
@@ -113,17 +112,24 @@ function _step_transform(h::ArrayHC{<:Dists.Product, M}, p::AbstractVector, inde
     return out, index+dimension(h)
 end
 
-
+dimension(c::ArrayHC{<:Dists.Dirichlet,M}) where {M} = prod(c.dims)-1
 function _step_transform(h::ArrayHC{<:Dists.Dirichlet, M}, p::AbstractVector, index) where {M}
-    out  = Vector{eltype(p)}(undef, dimension(h))
     d = dist(h)
     α = d.alpha
-    tot = zero(eltype(p))
-    for i in 1:dimension(h)
-        out[i] = quantile(Dists.Gamma(α[i],1), p[index-1+i])
-        tot += out[i]
+    T = promote_type(eltype(p), eltype(α))
+    println(T)
+    out  = zeros(T, dimension(h)+1)
+    println(eltype(out))
+    dstart = Dists.Beta(T(α[1]), sum(@view(α[2:end])))
+    println(typeof(dstart))
+    out[1] = quantile(Dists.Beta(T(α[1]), T(sum(@view(α[2:end])))), p[index])
+    println("Here!")
+    for i in 2:dimension(h)
+        ϕ = quantile(Dists.Beta(T(α[i]),T(sum(@view(α[i+1:end])))), p[index-1+i])
+        out[i] = T((1-sum(out))*ϕ)
     end
-    return out./tot, index+dimension(h)
+    out[end] = 1-sum(out)
+    return out, index+dimension(h)
 end
 
 ascube(d::MT.ProductMeasure) = ArrayHC(d)
