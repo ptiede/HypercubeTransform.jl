@@ -13,7 +13,7 @@ using DocStringExtensions
 import TransformVariables: as, transform, dimension, ∞
 
 
-export transform, dimension, ascube, asflat
+export transform, dimension, ascube, asflat, transform_and_logjac, transform_logdensity
 
 include("utility.jl")
 include("transform.jl")

@@ -20,5 +20,5 @@ end
 
 @inline asflat(d::MT.ProductMeasure) = as(Vector, asflat(first(MT.marginals(d))), length(d.pars))
 
-@inline asflat(d::NamedTuple) = prototype(d)(asflat.(fieldvalues(d)))
-@inline asflat(d::Tuple) = asflat.(d)
+@inline asflat(d::NamedTuple) = as(prototype(d)(asflat.(fieldvalues(d))))
+@inline asflat(d::Tuple) = as(asflat.(d))
