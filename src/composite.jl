@@ -21,7 +21,7 @@ function ascube(dists::NamedTuple{N, <:Tuple{Vararg{Union{Dists.Distribution, MT
 end
 dimension(tt::TupleHC) = tt.dimension
 
-
+@inline ascube(d::NamedTuple) = ascube(prototype(d)(ascube.(fieldvalues(d))))
 
 
 """
