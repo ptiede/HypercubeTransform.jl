@@ -20,4 +20,5 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/ptiede/HypercubeTransform.jl",
+    devbranch = "main"
 )
