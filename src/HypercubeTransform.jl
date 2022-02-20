@@ -1,22 +1,24 @@
 module HypercubeTransform
 
+using ArgCheck: @argcheck
 using Requires: @require
 import Distributions
 const Dists = Distributions
-using Distributions: quantile
+using Distributions: quantile, cdf
 import MeasureTheory
 const MT = MeasureTheory
 using MLStyle
 using GeneralizedGenerated
 using Tricks: static_hasmethod
 using DocStringExtensions
-import TransformVariables: as, transform, dimension, ∞
+import TransformVariables: as, transform, inverse, inverse!, inverse_eltype, dimension, ∞
 
 
-export transform, dimension, ascube, asflat, transform_and_logjac, transform_logdensity
+export transform, inverse, dimension, ascube, asflat, transform_and_logjac, transform_logdensity
 
 include("utility.jl")
 include("transform.jl")
+include("inverse.jl")
 include("composite.jl")
 include("asflat.jl")
 

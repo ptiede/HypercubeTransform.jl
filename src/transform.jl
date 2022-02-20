@@ -66,6 +66,7 @@ ascube(d::Dists.UnivariateDistribution) = ScalarHC(d)
 Computes the transformation from the unit hypercube to the distribution space.
 """
 function transform(c::AbstractHypercubeTransform, x)
+    @argcheck dimension(c) == length(x)
     return _transform(has_quantile(c), c, x)
 end
 
@@ -81,10 +82,19 @@ function _step_transform(c::ScalarHC, x::AbstractVector, index)
     transform(c, x[index]), index+1
 end
 
+inverse_eltype(::ScalarHC, x::Real) = float(typeof(x))
+
+
+function _step_inverse!(y::AbstractVector, index, c::ScalarHC, x::Real)
+    y[index] = _inverse(c, x)
+    return index+1
+end
+
 
 abstract type VectorHC <: AbstractHypercubeTransform end
 
 function transform(c::VectorHC, x::AbstractVector)
+    @argcheck dimension(c) == length(x)
     return first(_step_transform(c, x, firstindex(x)))
 end
 
@@ -103,6 +113,10 @@ end
 ascube(d::Union{Dists.MultivariateDistribution,Dists.Matrixvariate}) = ArrayHC(d)
 dist(d::ArrayHC) = d.dist
 
+function inverse_eltype(::ArrayHC, x::AbstractArray{T}) where {T}
+    float(T)
+end
+
 
 function _step_transform(h::ArrayHC{<:Dists.Product, M}, p::AbstractVector, index) where {M}
     out = Vector{eltype(p)}(undef, dimension(h))
@@ -110,6 +124,14 @@ function _step_transform(h::ArrayHC{<:Dists.Product, M}, p::AbstractVector, inde
         out[i] = first(_step_transform(ascube(dist(h).v[i]), p, index-1+i))
     end
     return out, index+dimension(h)
+end
+
+function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.Product, M}, y::AbstractVector) where {M}
+    d = dist(c)
+    for (i,yy) in enumerate(vec(y))
+        index = _step_inverse!(x, index, ascube(d.v[i]), yy)
+    end
+    return index
 end
 
 dimension(c::ArrayHC{<:Dists.Dirichlet,M}) where {M} = prod(c.dims)-1
@@ -120,7 +142,7 @@ function _step_transform(h::ArrayHC{<:Dists.Dirichlet, M}, p::AbstractVector, in
     #println(T)
     out  = zeros(T, dimension(h)+1)
     #println(eltype(out))
-    dstart = Dists.Beta(T(α[1]), sum(@view(α[2:end])))
+    #dstart = Dists.Beta(T(α[1]), sum(@view(α[2:end])))
     #println(typeof(dstart))
     out[1] = quantile(Dists.Beta(T(α[1]), T(sum(@view(α[2:end])))), p[index])
     for i in 2:dimension(h)
@@ -129,6 +151,21 @@ function _step_transform(h::ArrayHC{<:Dists.Dirichlet, M}, p::AbstractVector, in
     end
     out[end] = 1-sum(out)
     return out, index+dimension(h)
+end
+
+function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.Dirichlet, M}, y) where {M}
+    d = dist(c)
+    α = d.alpha
+    #T = promote_type(eltype(p), eltype(α))
+    x[index] = cdf(Dists.Beta(α[1], sum(@view(α[2:end]))), y[index])
+    ysum = y[index]
+    index += 1
+    for _ in 2:dimension(c)
+        x[index] = cdf(Dists.Beta(α[1], sum(@view(α[index+1:end]))), y[index]/(1-ysum))
+        ysum += y[index]
+        index+=1
+    end
+    return index
 end
 
 ascube(d::MT.ProductMeasure) = ArrayHC(d)
@@ -141,4 +178,12 @@ function _step_transform(h::ArrayHC{<:MT.ProductMeasure,M}, p::AbstractVector, i
         out[i] = first(_step_transform(ascube(mi), p, index-1+i))
     end
     return out, index+dimension(h)
+end
+
+function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:MT.ProductMeasure, M}, y) where {M}
+    m = MT.marginals(dist(c))
+    for (mi, yy) in zip(m,vec(y))
+        index = _step_inverse!(x, index, mi, yy)
+    end
+    return index
 end

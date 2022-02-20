@@ -29,24 +29,31 @@ end
     end
     cd = ascube(d)
     cm = ascube(m)
-    @test transform(cd, [0.5,0.5,0.5]) == transform(cm, [0.5,0.5,0.5])
+    pos = [0.5, 0.5, 0.5]
+    x = transform(cd, pos)
+    @test transform(cd, pos) == transform(cm, pos)
+    @test inverse(cd, x) ≈ pos
     cc = ascube.(d.v)
-    @test transform.(cc, [0.5,0.5,0.5]) == transform(cd, [0.5,0.5,0.5])
-    @inferred Vector{Float64} transform(cm, [0.5, 0.5, 0.5])
+    @test transform.(cc, pos) == transform(cd, pos)
+    @inferred Vector{Float64} transform(cm, pos)
 end
 
 @testset "Dirichlet" begin
-    d = Dists.Dirichlet([1.0,1.0,1.0])
+    d = Dists.Dirichlet([1.0,1.0,0.5])
     a = Dists.Normal()
     dc = ascube(d)
-    @inferred transform(dc, [0.5, 0.5, 0.5])
-    p = rand(3, 10_000_00)
+    pos = rand(2)
+    ps = transform(dc, pos)
+    @test inverse(dc, ps) ≈ pos
+    @inferred transform(dc, [0.5, 0.5])
+
+    p = rand(2, 10_000_00)
     x = transform.(Ref(dc), eachcol(p))
     @test isapprox(mean(x), mean(d), atol=1e-3)
 
     dad = ascube((a, d))
-    @inferred transform(dad, [0.5,0.5,0.5,0.5])
-    pad = rand(4, 10_000_00)
+    @inferred transform(dad, [0.5,0.5,0.5])
+    pad = rand(3, 50_000_00)
     xad = transform.(Ref(dad), eachcol(pad))
     mN = mean(first.(xad))
     mD = mean(last.(xad))

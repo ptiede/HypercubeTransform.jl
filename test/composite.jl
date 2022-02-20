@@ -15,9 +15,17 @@ using Test
 
     tc = ascube((a, b, c, d))
     nc = ascube((;a,b, c, d))
+
+    pt = transform(tc, pos)
+    pn = transform(nc, pos)
+
+    @test inverse(tc, pt) ≈ pos
+    @test inverse(nc, pn) ≈ pos
+
     @test dimension(tc) == length(pos)
     println(transform(tc, pos))
     @test transform(tc, pos) == values(transform(nc, pos))
+
 
     @inferred NTuple{3, Float64} transform(tc, pos)
 end

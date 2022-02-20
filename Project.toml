@@ -4,6 +4,7 @@ authors = ["ptiede <ptiede91@gmail.com> and contributors"]
 version = "0.2.4"
 
 [deps]
+ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 GeneralizedGenerated = "6b9d7cbe-bcb9-11e9-073f-15a7a543e2eb"
@@ -15,6 +16,7 @@ TransformVariables = "84d833dd-6860-57f9-a1a7-6da5db126cff"
 Tricks = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 
 [compat]
+ArgCheck = "2"
 Distributions = "0.24,0.25"
 DocStringExtensions = "0.7,0.8"
 GeneralizedGenerated = "0.3"
