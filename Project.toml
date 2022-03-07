@@ -1,7 +1,7 @@
 name = "HypercubeTransform"
 uuid = "9ec9aee3-0fd3-44c2-8e61-a50acc66f3c8"
 authors = ["ptiede <ptiede91@gmail.com> and contributors"]
-version = "0.2.4"
+version = "0.2.5"
 
 [deps]
 ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
@@ -22,7 +22,7 @@ DocStringExtensions = "0.7,0.8"
 GeneralizedGenerated = "0.3"
 MLStyle = "0.4"
 MeasureTheory = "0.10,0.11,0.12,0.13"
-NamedTupleTools = "0.12, 0.13"
+NamedTupleTools = "0.12, 0.13, 0.14"
 Requires = "1"
 TransformVariables = "0.4,0.5, 0.6"
 Tricks = "0.1"
