@@ -14,7 +14,7 @@ end
 @inline asflat(d::Dists.MvNormal) = as(Vector, length(d.μ))
 
 @inline asflat(d::Dists.MvLogNormal) = as(Vector, as(Real, 0, ∞), length(d))
-@inline asflat(d::Dists.LogNormal) = as(Real, 0, ∞)
+@inline asflat(::Dists.LogNormal) = as(Real, 0, ∞)
 
 @inline function asflat(d::Dists.Product{A,T,V}) where {A,T<:Dists.ContinuousUnivariateDistribution, V}
     @assert !Base.isabstracttype(T) "$d is abstract type this isn't a homogenous product dist which isn't currently supported"

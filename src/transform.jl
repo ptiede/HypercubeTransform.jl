@@ -119,12 +119,16 @@ end
 
 
 function _step_transform(h::ArrayHC{<:Dists.Product, M}, p::AbstractVector, index) where {M}
-    out = Vector{eltype(p)}(undef, dimension(h))
-    for i in 1:dimension(h)
-        out[i] = first(_step_transform(ascube(dist(h).v[i]), p, index-1+i))
-    end
+    #out = Vector{eltype(p)}(undef, dimension(h))
+    #for i in 1:dimension(h)
+    #    out[i] = first(_step_transform(ascube(dist(h).v[i]), p, index-1+i))
+    #end
+    dh = dist(h).v
+    out = map(i->first(_step_transform(ascube(dh[i]),p, index-1+i)), 1:dimension(h))
     return out, index+dimension(h)
 end
+
+
 
 function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.Product, M}, y::AbstractVector) where {M}
     d = dist(c)
