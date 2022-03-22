@@ -7,8 +7,9 @@ const Dists = Distributions
 using Distributions: quantile, cdf
 import MeasureTheory
 const MT = MeasureTheory
-using MLStyle
-using GeneralizedGenerated
+#using MLStyle
+#using GeneralizedGenerated
+using PDMats: unwhiten, whiten
 using Tricks: static_hasmethod
 using DocStringExtensions
 import TransformVariables: as, transform, inverse, inverse!, inverse_eltype, dimension, ∞

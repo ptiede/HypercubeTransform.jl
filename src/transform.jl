@@ -119,12 +119,12 @@ end
 
 
 function _step_transform(h::ArrayHC{<:Dists.Product, M}, p::AbstractVector, index) where {M}
-    #out = Vector{eltype(p)}(undef, dimension(h))
-    #for i in 1:dimension(h)
-    #    out[i] = first(_step_transform(ascube(dist(h).v[i]), p, index-1+i))
-    #end
-    dh = dist(h).v
-    out = map(i->first(_step_transform(ascube(dh[i]),p, index-1+i)), 1:dimension(h))
+    out = Vector{eltype(p)}(undef, dimension(h))
+    for i in 1:dimension(h)
+        out[i] = first(_step_transform(ascube(dist(h).v[i]), p, index-1+i))
+    end
+    #dh = dist(h).v
+    #out = map(i->first(_step_transform(ascube(dh[i]),p, index-1+i)), 1:dimension(h))
     return out, index+dimension(h)
 end
 
@@ -137,6 +137,57 @@ function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.Product, M}
     end
     return index
 end
+
+function _step_transform(h::ArrayHC{<:Dists.MvNormal,M}, p::AbstractVector, index) where {M}
+    out = Vector{eltype(p)}(undef, dimension(h))
+    d = dist(h)
+    Σ = d.Σ
+    μ = d.μ
+    for i in eachindex(μ)
+        out[i] = quantile(Dists.Normal(), p[index-1+i])
+    end
+    # Now unwhiten to make a covariant normal
+    x = unwhiten(Σ, out)
+    x .+= μ
+    return x, index+dimension(h)
+end
+
+
+function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.MvNormal,M}, y::AbstractVector) where {M}
+    d = dist(c)
+    Σ = d.Σ
+    μ = d.μ
+    z = whiten(Σ,(@view(y[index:(index+(length(μ)-1))]) - d.μ))
+    for i in eachindex(μ)
+        x[index] = Dists.cdf(Dists.Normal(), z[i])
+        index += 1
+    end
+    return index
+end
+
+function _step_transform(h::ArrayHC{<:Dists.DiagNormal,M}, p::AbstractVector, index) where {M}
+    out = Vector{eltype(p)}(undef, dimension(h))
+    d = dist(h)
+    Σ = d.Σ.diag
+    μ = d.μ
+    for i in eachindex(μ)
+        out[i] = quantile(Dists.Normal(μ[i], sqrt(Σ[i])), p[index-1+i])
+    end
+    return out, index+dimension(h)
+end
+
+function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.DiagNormal,M}, y::AbstractVector) where {M}
+    d = dist(c)
+    Σ = d.Σ.diag
+    μ = d.μ
+    for i in eachindex(μ)
+        x[index] = Dists.cdf(Dists.Normal(μ[i], sqrt(Σ[i])), y[index])
+        index += 1
+    end
+    return index
+end
+
+
 
 dimension(c::ArrayHC{<:Dists.Dirichlet,M}) where {M} = prod(c.dims)-1
 function _step_transform(h::ArrayHC{<:Dists.Dirichlet, M}, p::AbstractVector, index) where {M}
@@ -172,7 +223,12 @@ function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.Dirichlet, 
     return index
 end
 
+
+
+
+
 ascube(d::MT.ProductMeasure) = ArrayHC(d)
+
 
 
 function _step_transform(h::ArrayHC{<:MT.ProductMeasure,M}, p::AbstractVector, index) where {M}
