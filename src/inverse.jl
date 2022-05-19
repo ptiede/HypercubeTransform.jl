@@ -1,3 +1,9 @@
+
+
+struct HasCDF end
+struct NoCDF end
+has_cdf(::ScalarHC{D}) where {D} = static_hasmethod(cdf, Tuple{D,Float64}) ? HasCDF() : NoCDF()
+
 """
     `$(FUNCTIONNAME)(c::AbstractHypercubeTransform, p)`
 Transforms from the parameter space `p`, to the unit hypercube
@@ -12,17 +18,11 @@ no custom transformation exists then an error will be raised.
  tuple using a similar method to the
  [TransformVariables.jl](https://github.com/tpapp/TransformVariables.jl) method.
 """
-function inverse end
-
-struct HasCDF end
-struct NoCDF end
-has_cdf(::ScalarHC{D}) where {D} = static_hasmethod(cdf, Tuple{D,Float64}) ? HasCDF() : NoCDF()
-
-function inverse(c::AbstractHypercubeTransform, x)
-    inverse!(Vector{inverse_eltype(c, x)}(undef, dimension(c)), c, x)
+function TV.inverse(c::AbstractHypercubeTransform, x)
+    TV.inverse!(Vector{inverse_eltype(c, x)}(undef, dimension(c)), c, x)
 end
 
-function inverse!(x::AbstractVector, c::AbstractHypercubeTransform, y)
+function TV.inverse!(x::AbstractVector, c::AbstractHypercubeTransform, y)
     _step_inverse!(x, firstindex(x), c, y)
     return x
 end

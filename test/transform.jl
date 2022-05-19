@@ -15,6 +15,11 @@ using Test
     cb = ascube(b)
     cc = ascube(c)
 
+    fa = asflat(a)
+    fb = asflat(b)
+    fc = asflat(c)
+
+
     @test transform(ca, 0.5) == 0.0
     @test transform(cb, 0.5) == 0.5
     @test transform(cc, 0.5) == Dists.quantile(c, 0.5)

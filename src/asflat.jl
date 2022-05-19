@@ -45,7 +45,7 @@ function transform(tr::FlatTransform, x)
     tr.fwd(x)
 end
 
-function inverse(tr::FlatTransform, x)
+function TV.inverse(tr::FlatTransform, x)
     tr.bck(x)
 end
 
@@ -92,6 +92,6 @@ function transform(t::NamedFlatTransform, x::AbstractVector)
     t.bij.fwd(t.unflatten(x))
 end
 
-function inverse(t::NamedFlatTransform, x::NamedTuple)
+function TV.inverse(t::NamedFlatTransform, x::NamedTuple)
     t.flat(t.bij.bck(x))
 end
