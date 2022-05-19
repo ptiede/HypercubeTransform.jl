@@ -5,9 +5,11 @@ version = "0.2.7"
 
 [deps]
 ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
+Bijectors = "76274a88-744f-5084-9051-94815aaf08c4"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 MeasureTheory = "eadaa1a4-d27c-401d-8699-e962e1bbc33b"
+ModelWrappers = "44c54197-9f56-47cc-9960-7f2e20bfb0d6"
 NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
 PDMats = "90014a1f-27ba-587c-ab20-58faa44d9150"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
@@ -16,12 +18,13 @@ Tricks = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 
 [compat]
 ArgCheck = "2"
+Bijectors = "0.10"
 Distributions = "0.24,0.25"
 DocStringExtensions = "0.7,0.8"
-MeasureTheory = "0.10,0.11,0.12,0.13"
+MeasureTheory = "0.14,0.15"
 NamedTupleTools = "0.12, 0.13, 0.14"
 Requires = "1"
-TransformVariables = "0.4,0.5, 0.6"
+TransformVariables = "0.4,0.5,0.6"
 Tricks = "0.1"
 julia = "1.5"
 

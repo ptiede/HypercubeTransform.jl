@@ -12,9 +12,9 @@ const MT = MeasureTheory
 using PDMats: unwhiten, whiten
 using Tricks: static_hasmethod
 using DocStringExtensions
-import TransformVariables: as, transform, inverse, inverse!, inverse_eltype, dimension, ∞
-
-
+import TransformVariables: as, transform, inverse, inverse!, inverse_eltype, dimension, ∞, transform_and_logjac
+import TransformVariables
+const TV = TransformVariables
 export transform, inverse, dimension, ascube, asflat, transform_and_logjac, transform_logdensity
 
 include("utility.jl")
