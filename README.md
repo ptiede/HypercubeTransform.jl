@@ -8,7 +8,7 @@
 [![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
 
 We love to use nested sampling with the EHT, but it is rather annoying to constantly write the prior transformation. This package will do that for you. It does this by first looking at the types of the 
-distribution and constructing a transformation function. This also can be automated with Soss.jl.
+distribution and constructing a transformation function. 
 
 
 **MORE TO COME**
