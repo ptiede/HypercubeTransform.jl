@@ -23,7 +23,6 @@ include("transform.jl")
 include("inverse.jl")
 include("composite.jl")
 include("asflat.jl")
-include("fastsimplex.jl")
 
 #function __init__()
  #   @require Soss="8ce77f84-9b61-11e8-39ff-d17a774bf41c" include("soss.jl")

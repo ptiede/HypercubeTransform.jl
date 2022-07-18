@@ -157,7 +157,7 @@ function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.MvNormal,M}
     d = dist(c)
     Σ = d.Σ
     μ = d.μ
-    z = whiten(Σ,(@view(y[index:(index+(length(μ)-1))]) - d.μ))
+    z = whiten(Σ,y - d.μ)
     for i in eachindex(μ)
         x[index] = Dists.cdf(Dists.Normal(), z[i])
         index += 1
@@ -181,7 +181,7 @@ function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.DiagNormal,
     Σ = d.Σ.diag
     μ = d.μ
     for i in eachindex(μ)
-        x[index] = Dists.cdf(Dists.Normal(μ[i], sqrt(Σ[i])), y[index])
+        x[index] = Dists.cdf(Dists.Normal(μ[i], sqrt(Σ[i])), y[i])
         index += 1
     end
     return index
@@ -212,12 +212,12 @@ function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.Dirichlet, 
     d = dist(c)
     α = d.alpha
     #T = promote_type(eltype(p), eltype(α))
-    x[index] = cdf(Dists.Beta(α[1], sum(@view(α[2:end]))), y[index])
+    x[index] = cdf(Dists.Beta(α[begin], sum(@view(α[2:end]))), y[begin])
     ysum = y[index]
     index += 1
-    for _ in 2:dimension(c)
-        x[index] = cdf(Dists.Beta(α[1], sum(@view(α[index+1:end]))), y[index]/(1-ysum))
-        ysum += y[index]
+    for i in 2:dimension(c)
+        x[index] = cdf(Dists.Beta(α[1], sum(@view(α[index+1:end]))), y[i]/(1-ysum))
+        ysum += y[i]
         index+=1
     end
     return index

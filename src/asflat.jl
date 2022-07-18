@@ -4,8 +4,8 @@ using NamedTupleTools
 asflat(d) = MT.as(d)
 
 @inline function asflat(d::Dists.RealInterval)
-    lb = isfinite(d.lb) ? d.lb : -∞
-    ub = isfinite(d.lb) ? d.ub : ∞
+    lb = isfinite(d.lb) ? d.lb : -TV.∞
+    ub = isfinite(d.ub) ? d.ub : TV.∞
     return as(Real, lb, ub)
 end
 
