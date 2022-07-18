@@ -10,8 +10,9 @@ using Test
 @testset "HypercubeTransform.jl" begin
     # Write your tests here.
     tests = [
-        "transform",
-        "composite",
+        #"transform",
+        #"composite",
+        "fastsimplex"
         #"soss"
     ]
     res = map(tests) do t
