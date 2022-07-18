@@ -1,37 +1,34 @@
 name = "HypercubeTransform"
 uuid = "9ec9aee3-0fd3-44c2-8e61-a50acc66f3c8"
 authors = ["ptiede <ptiede91@gmail.com> and contributors"]
-version = "0.2.7"
+version = "0.3.0"
 
 [deps]
 ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
-Bijectors = "76274a88-744f-5084-9051-94815aaf08c4"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MeasureTheory = "eadaa1a4-d27c-401d-8699-e962e1bbc33b"
-ModelWrappers = "44c54197-9f56-47cc-9960-7f2e20bfb0d6"
 NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
 PDMats = "90014a1f-27ba-587c-ab20-58faa44d9150"
-Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 TransformVariables = "84d833dd-6860-57f9-a1a7-6da5db126cff"
 Tricks = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 
 [compat]
 ArgCheck = "2"
-Bijectors = "0.10"
 Distributions = "0.24,0.25"
-DocStringExtensions = "0.7,0.8"
+DocStringExtensions = "0.7,0.8,0.9"
 MeasureTheory = "0.14,0.15"
-ModelWrappers = "0.2"
 NamedTupleTools = "0.12, 0.13, 0.14"
 PDMats = "0.11"
-Requires = "1"
 TransformVariables = "0.4,0.5,0.6"
 Tricks = "0.1"
-julia = "1.5"
+julia = "1.6"
 
 [extras]
+ChainRulesTestUtils = "cdddcdb0-9152-4a09-a978-84456f9df70a"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Test", "ChainRulesTestUtils"]

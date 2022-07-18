@@ -28,7 +28,7 @@ using Test
 end
 
 @testset "ArrayHC" begin
-    d = Dists.Product([Dists.Normal(), Dists.Uniform(), Dists.Normal()])
+    d = Dists.product_distribution([Dists.Normal(), Dists.Uniform(), Dists.Normal()])
     m = MT.For(d.v) do p
             return p
     end
@@ -64,5 +64,15 @@ end
     mD = mean(last.(xad))
     @test isapprox(mN, mean(a), atol=1e-3)
     @test isapprox(mD, mean(d), atol=1e-3)
+
+    dda = ascube((d, a))
+    @inferred transform(dda, [0.5,0.5,0.5])
+    pda = rand(3, 50_000_00)
+    xda = transform.(Ref(dda), eachcol(pda))
+    mN = mean(last.(xda))
+    mD = mean(first.(xda))
+    @test isapprox(mN, mean(a), atol=1e-3)
+    @test isapprox(mD, mean(d), atol=1e-3)
+
 
 end

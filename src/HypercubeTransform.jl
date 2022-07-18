@@ -1,10 +1,10 @@
 module HypercubeTransform
 
 using ArgCheck: @argcheck
-using Requires: @require
 import Distributions
 const Dists = Distributions
 using Distributions: quantile, cdf
+using LinearAlgebra
 import MeasureTheory
 const MT = MeasureTheory
 #using MLStyle
@@ -15,6 +15,7 @@ using DocStringExtensions
 import TransformVariables: as, transform, inverse, inverse!, inverse_eltype, dimension, ∞, transform_and_logjac
 import TransformVariables
 const TV = TransformVariables
+using Random: AbstractRNG
 export transform, inverse, dimension, ascube, asflat, transform_and_logjac, transform_logdensity
 
 include("utility.jl")
