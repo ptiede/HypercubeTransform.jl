@@ -23,7 +23,11 @@ end
     as(Vector, asflat(first(d.v)), length(d.v))
 end
 
-@inline asflat(d::MT.ProductMeasure) = as(Vector, asflat(first(MT.marginals(d))), length(d.pars))
+function asflat(d::MT.ProductMeasure{<:AbstractVector{T}}) where {T}
+    @assert !Base.isabstracttype(T) "$d is abstract type this isn't a homogenous product dist which isn't currently supported"
+    return asflat(d.marginals)
+end
+@inline asflat(d::MT.ProductMeasure{<:NamedTuple}) = asflat(d.marginals)
 
 @inline asflat(d::NamedTuple) = as(prototype(d)(asflat.(fieldvalues(d))))
 @inline asflat(d::Tuple) = as(asflat.(d))
