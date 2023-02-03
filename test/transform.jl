@@ -64,12 +64,10 @@ end
 
     dda = ascube((d, a))
     @inferred transform(dda, [0.5,0.5,0.5])
-    pda = rand(3, 50_000_00)
+    pda = rand(3, 100_000_00)
     xda = transform.(Ref(dda), eachcol(pda))
     mN = mean(last.(xda))
     mD = mean(first.(xda))
     @test isapprox(mN, mean(a), atol=1e-3)
     @test isapprox(mD, mean(d), atol=1e-3)
-
-
 end
