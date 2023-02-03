@@ -12,11 +12,11 @@ struct TupleHC{T} <: VectorHC
     end
 end
 ascube(transformations::NCube) = TupleHC(transformations)
-ascube(dists::Tuple{Vararg{Union{Dists.Distribution, MT.AbstractMeasure},N}}) where {N}= ascube(ascube.(dists))
+ascube(dists::Tuple{Vararg{Union{Dists.Distribution},N}}) where {N}= ascube(ascube.(dists))
 
 ascube(transformations::NamedTuple{N, <:NCube}) where {N} = TupleHC(transformations)
 
-function ascube(dists::NamedTuple{N, <:Tuple{Vararg{Union{Dists.Distribution, MT.AbstractMeasure},M}}}) where {N,M}
+function ascube(dists::NamedTuple{N, <:Tuple{Vararg{Union{Dists.Distribution},M}}}) where {N,M}
     ascube(NamedTuple{N}(ascube.(values(dists))))
 end
 dimension(tt::TupleHC) = tt.dimension

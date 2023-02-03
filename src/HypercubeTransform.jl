@@ -5,8 +5,8 @@ import Distributions
 const Dists = Distributions
 using Distributions: quantile, cdf
 using LinearAlgebra
-import MeasureTheory
-const MT = MeasureTheory
+# import MeasureTheory
+# const MT = MeasureTheory
 #using MLStyle
 #using GeneralizedGenerated
 using PDMats: unwhiten, whiten

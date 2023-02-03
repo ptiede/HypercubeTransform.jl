@@ -2,7 +2,7 @@ import Distributions
 const Dists = Distributions
 using Distributions: mean
 import MeasureTheory
-const MT = MeasureTheory
+# const MT = MeasureTheory
 using HypercubeTransform
 using Test
 
@@ -29,18 +29,15 @@ end
 
 @testset "ArrayHC" begin
     d = Dists.product_distribution([Dists.Normal(), Dists.Uniform(), Dists.Normal()])
-    m = MT.For(d.v) do p
-            return p
-    end
+    # m = MT.For(d.v) do p
+    #         return p
+    # end
     cd = ascube(d)
-    cm = ascube(m)
     pos = [0.5, 0.5, 0.5]
     x = transform(cd, pos)
-    @test transform(cd, pos) == transform(cm, pos)
     @test inverse(cd, x) ≈ pos
     cc = ascube.(d.v)
     @test transform.(cc, pos) == transform(cd, pos)
-    @inferred Vector{Float64} transform(cm, pos)
 end
 
 @testset "Dirichlet" begin

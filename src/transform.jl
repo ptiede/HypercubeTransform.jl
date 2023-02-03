@@ -227,23 +227,23 @@ end
 
 
 
-ascube(d::Union{MT.For, MT.ProductMeasure}) = ArrayHC(d)
+# ascube(d::Union{MT.For, MT.ProductMeasure}) = ArrayHC(d)
 
 
 
-function _step_transform(h::ArrayHC{S,M}, p::AbstractVector, index) where {S <: Union{MT.ProductMeasure, MT.For}, M}
-    out = Vector{eltype(p)}(undef, dimension(h))
-    m = MT.marginals(dist(h))
-    for (i,mi) in enumerate(m)
-        out[i] = first(_step_transform(ascube(mi), p, index-1+i))
-    end
-    return out, index+dimension(h)
-end
+# function _step_transform(h::ArrayHC{S,M}, p::AbstractVector, index) where {S <: Union{MT.ProductMeasure, MT.For}, M}
+#     out = Vector{eltype(p)}(undef, dimension(h))
+#     m = MT.marginals(dist(h))
+#     for (i,mi) in enumerate(m)
+#         out[i] = first(_step_transform(ascube(mi), p, index-1+i))
+#     end
+#     return out, index+dimension(h)
+# end
 
-function _step_inverse!(x::AbstractVector, index, c::ArrayHC{S, M}, y) where {S<: Union{MT.ProductMeasure, MT.For}, M}
-    m = MT.marginals(dist(c))
-    for (mi, yy) in zip(m,vec(y))
-        index = _step_inverse!(x, index, mi, yy)
-    end
-    return index
-end
+# function _step_inverse!(x::AbstractVector, index, c::ArrayHC{S, M}, y) where {S<: Union{MT.ProductMeasure, MT.For}, M}
+#     m = MT.marginals(dist(c))
+#     for (mi, yy) in zip(m,vec(y))
+#         index = _step_inverse!(x, index, mi, yy)
+#     end
+#     return index
+# end
