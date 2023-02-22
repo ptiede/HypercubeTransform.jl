@@ -1,14 +1,10 @@
-abstract type AbstractHypercubeTransform end
+abstract type AbstractHypercubeTransform <: TV.AbstractTransform end
 
 
-"""
-    `$(FUNCTIONNAME)(c::AbstractHypercubeTransform)`
-Returns the dimension of the hypercube transform.
-"""
-function dimension end
 
 """
-    `$(FUNCTIONNAME)(c)`
+    `$(FUNCTIONNAME)(c)
+
 Constructs the object that contains the necessary information to move from
 the unit hypercube to the distribution space. This is the usual function to use
 when construct the transformation.
@@ -29,7 +25,8 @@ ascube( (α = Uniform(), β = Normal()) )
 function ascube end
 
 """
-    `$(FUNCTIONNAME)(c::AbstractHypercubeTransform, p)`
+    $(FUNCTIONNAME)(c::AbstractHypercubeTransform, p)
+
 Transforms from the hypercube with coordinates `p`, to the parameter space
 defined by the transformation `c`.
 
