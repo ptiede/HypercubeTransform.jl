@@ -16,6 +16,12 @@ using Test
     tc = ascube((a, b, c, d))
     nc = ascube((;a,b, c, d))
 
+    dncnc = (a=(;a, b), b = (;c, d=(d, c)))
+    tncnc = ascube(dncnc)
+    x = rand(dimension(tncnc))
+    p = transform(tncnc, x)
+    @test inverse(tncnc, p) ≈ x
+
     tf = asflat((a,b,c,d))
     nf = asflat((;a,b,c,d))
 

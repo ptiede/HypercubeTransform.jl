@@ -12,7 +12,7 @@ struct TupleHC{T} <: VectorHC
     end
 end
 ascube(transformations::NCube) = TupleHC(transformations)
-ascube(dists::Tuple{Vararg{Union{Dists.Distribution},N}}) where {N}= ascube(ascube.(dists))
+ascube(dists::Tuple{Vararg{Union{Dists.Distribution},N}}) where {N}= ascube(map(ascube, (dists)))
 
 ascube(transformations::NamedTuple{N, <:NCube}) where {N} = TupleHC(transformations)
 
@@ -69,7 +69,7 @@ end
 function _step_inverse!(x::AbstractVector, index, tt::TupleHC{<:Tuple}, y::Tuple)
     transformations = tt.transformations
     @argcheck keys(transformations) == keys(y)
-    @argcheck length(x) == dimension(tt)
+    # @argcheck length(x) == dimension(tt)
     _inverse!_tuple(x, index, transformations, y)
 end
 
@@ -88,6 +88,6 @@ end
 function _step_inverse!(x::AbstractVector, index, tt::TupleHC{<:NamedTuple}, y::NamedTuple)
     transformations = tt.transformations
     @argcheck keys(transformations) == keys(y)
-    @argcheck length(x) == dimension(tt)
+    # @argcheck length(x) == dimension(tt)
     _inverse!_tuple(x, index, values(transformations), values(y))
 end

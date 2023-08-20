@@ -23,6 +23,7 @@ function TV.inverse(c::AbstractHypercubeTransform, x)
 end
 
 function TV.inverse!(x::AbstractVector, c::AbstractHypercubeTransform, y)
+    @argcheck length(x) == dimension(c)
     _step_inverse!(x, firstindex(x), c, y)
     return x
 end

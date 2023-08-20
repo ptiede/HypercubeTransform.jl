@@ -58,6 +58,11 @@ dimension(::ScalarHC) = 1
 dist(d::ScalarHC) = d.dist
 ascube(d::Dists.UnivariateDistribution) = ScalarHC(d)
 
+struct EmptyTuple <: AbstractHypercubeTransform end
+dimension(::EmptyTuple) = 0
+ascube(::Tuple{}) = EmptyTuple()
+inverse_eltype(::EmptyTuple, ::Tuple{}) = Tuple{}
+
 """
     $(SIGNATURES)
 Computes the transformation from the unit hypercube to the distribution space.
@@ -86,6 +91,16 @@ function _step_inverse!(y::AbstractVector, index, c::ScalarHC, x::Real)
     y[index] = _inverse(c, x)
     return index+1
 end
+
+function _step_transform(h::EmptyTuple, p::AbstractVector, index)
+    return (), index
+end
+
+function _step_inverse!(y::AbstractVector, index, c::EmptyTuple, ::Tuple{})
+    return index
+end
+
+
 
 
 abstract type VectorHC <: AbstractHypercubeTransform end
