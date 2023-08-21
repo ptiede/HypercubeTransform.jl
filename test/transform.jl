@@ -115,6 +115,6 @@ end
     d2 = Dists.product_distribution([Dists.Uniform(), Dists.Normal()])
 
     t = asflat(d)
-    @test dimension(2) == 2
+    @test dimension(t) == 2
     @test_throws AssertionError asflat(d2)
 end
