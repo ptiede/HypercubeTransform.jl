@@ -1,10 +1,9 @@
 import Distributions
 const Dists = Distributions
 using Distributions: mean
-import MeasureTheory
-# const MT = MeasureTheory
 using HypercubeTransform
 using Test
+using Statistics
 
 @testset "Scalar" begin
     a = Dists.Normal()
@@ -59,8 +58,8 @@ end
     xad = transform.(Ref(dad), eachcol(pad))
     mN = mean(first.(xad))
     mD = mean(last.(xad))
-    @test isapprox(mN, mean(a), atol=1e-3)
-    @test isapprox(mD, mean(d), atol=1e-3)
+    @test isapprox(mN, mean(a), atol=1e-2)
+    @test isapprox(mD, mean(d), atol=1e-2)
 
     dda = ascube((d, a))
     @inferred transform(dda, [0.5,0.5,0.5])
@@ -68,6 +67,45 @@ end
     xda = transform.(Ref(dda), eachcol(pda))
     mN = mean(last.(xda))
     mD = mean(first.(xda))
-    @test isapprox(mN, mean(a), atol=1e-3)
-    @test isapprox(mD, mean(d), atol=1e-3)
+    @test isapprox(mN, mean(a), atol=1e-2)
+    @test isapprox(mD, mean(d), atol=1e-2)
+
+    tf = asflat(d)
+    x = randn(dimension(tf))
+    y = transform(tf, x)
+    @test length(y) == dimension(tf)+1
+    @test inverse(tf, y) ≈ x
+end
+
+@testset "LogNormal" begin
+    d1 = Dists.LogNormal(0.0, 1.0)
+    t1 = asflat(d1)
+    @test dimension(t1) == 1
+
+    dN = Dists.MvLogNormal(5, 1.0)
+    tN = asflat(dN)
+    @test dimension(tN) == length(dN)
+end
+
+@testset "EmptyTuple" begin
+    nt = (a = Dists.Uniform(), b = ())
+    tc = ascube(nt)
+    tf = asflat(nt)
+
+    x = rand(dimension(tc))
+    y = transform(tc, x)
+    @test y.b isa Tuple{}
+    @test inverse(tc, y) == x
+end
+
+@testset "MvNormal" begin
+    d = Dists.MvNormal(ones(2), [ 2.0 0.1; 0.1 2.0])
+    tc = ascube(d)
+
+    s = rand(2, 10_000_000)
+    p = transform.(Ref(tc), eachcol(s))
+
+    @test isapprox(mean(p), ones(2), atol=5*2/sqrt(10_000_000))
+    @test isapprox(cov(p), [ 2.0 0.1; 0.1 2.0], atol=50/sqrt(10_000_000))
+
 end

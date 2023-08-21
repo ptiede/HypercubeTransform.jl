@@ -1,7 +1,5 @@
 import Distributions
 const Dists = Distributions
-import MeasureTheory
-const MT = MeasureTheory
 using HypercubeTransform
 using Test
 

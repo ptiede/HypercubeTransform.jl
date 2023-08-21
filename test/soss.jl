@@ -2,8 +2,6 @@ using Soss
 using HypercubeTransform
 import Distributions
 const Dists = Distributions
-import MeasureTheory
-const MT = MeasureTheory
 using Test
 
 @testset "Soss" begin

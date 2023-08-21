@@ -2,8 +2,7 @@
 using HypercubeTransform
 import Distributions
 const Dists = Distributions
-import MeasureTheory
-const MT = MeasureTheory
+using Statistics
 
 using Test
 
