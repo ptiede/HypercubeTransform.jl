@@ -109,3 +109,12 @@ end
     @test isapprox(cov(p), [ 2.0 0.1; 0.1 2.0], atol=50/sqrt(10_000_000))
 
 end
+
+@testset "Product" begin
+    d = product_distribution([Dists.Uniform(), Dists.Uniform()])
+    d2 = product_distribution([Dists.Uniform(), Dists.Normal()])
+
+    t = asflat(d)
+    @test dimension(2) == 2
+    @test_throws AssertionError asflat(d2)
+end
