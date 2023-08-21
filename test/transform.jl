@@ -111,8 +111,8 @@ end
 end
 
 @testset "Product" begin
-    d = product_distribution([Dists.Uniform(), Dists.Uniform()])
-    d2 = product_distribution([Dists.Uniform(), Dists.Normal()])
+    d = Dists.product_distribution([Dists.Uniform(), Dists.Uniform()])
+    d2 = Dists.product_distribution([Dists.Uniform(), Dists.Normal()])
 
     t = asflat(d)
     @test dimension(2) == 2
