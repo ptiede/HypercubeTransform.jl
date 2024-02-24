@@ -1,6 +1,7 @@
 module HypercubeTransform
 
 using ArgCheck: @argcheck
+using ComponentArrays
 import Distributions
 const Dists = Distributions
 using Distributions: quantile, cdf
@@ -8,19 +9,21 @@ using LinearAlgebra
 using PDMats: unwhiten, whiten
 using Tricks: static_hasmethod
 using DocStringExtensions
-import TransformVariables: as, transform, inverse, inverse!, inverse_eltype, dimension, ∞, transform_and_logjac
-import TransformVariables
-const TV = TransformVariables
+using Bijectors
+import Bijectors: transform, bijector
+using ChangesOfVariables: ChangesOfVariables, with_logabsdet_jacobian
+using InverseFunctions: inverse
 using Random: AbstractRNG
 using PrecompileTools
 
-export transform, inverse, dimension, ascube, asflat, transform_and_logjac, transform_logdensity
+export transform, inverse, dimension, ascube, asflat, transform_and_logjac, transform_logdensity, NamedDist
 
 include("utility.jl")
 include("transform.jl")
 include("inverse.jl")
 include("composite.jl")
 include("asflat.jl")
+include("named.jl")
 
 
 @setup_workload begin
@@ -30,17 +33,13 @@ include("asflat.jl")
     d = Dists.Gamma()
     pos = [0.5, 0.5, 0.5, 0.5, 0.1]
 
-    tc = ascube((a, b, c, d))
     nc = ascube((;a,b, c, d))
 
-    tf = asflat((a,b,c,d))
-    nf = asflat((;a,b,c,d))
+    nf = Bijectors.transformed(NamedDist(;a,b,c,d))
 
-    pt = transform(tc, pos)
-    pn = transform(nc, pos)
+    # pn = transform(nc, pos)
 
-    ptf = transform(tf, pos)
-    pnf = transform(nf, pos)
+    # pnf = transform(nf, rand(nf))
 end
 
 

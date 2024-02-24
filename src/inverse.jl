@@ -5,7 +5,7 @@ struct NoCDF end
 has_cdf(::ScalarHC{D}) where {D} = static_hasmethod(cdf, Tuple{D,Float64}) ? HasCDF() : NoCDF()
 
 """
-    `$(FUNCTIONNAME)(c::AbstractHypercubeTransform, p)`
+    `$(FUNCTIONNAME)(c::AbstractHypercubeBijector, p)`
 Transforms from the parameter space `p`, to the unit hypercube
 defined by the transformation `c`.
 
@@ -18,24 +18,24 @@ no custom transformation exists then an error will be raised.
  tuple using a similar method to the
  [TransformVariables.jl](https://github.com/tpapp/TransformVariables.jl) method.
 """
-function TV.inverse(c::AbstractHypercubeTransform, x)
-    TV.inverse!(Vector{inverse_eltype(c, x)}(undef, dimension(c)), c, x)
+function transform(c::Bijectors.Inverse{<:AbstractHypercubeBijector}, x)
+    inverse!(Vector{inverse_eltype(c, x)}(undef, dimension(c)), c, x)
 end
 
-function TV.inverse!(x::AbstractVector, c::AbstractHypercubeTransform, y)
+function inverse!(x::AbstractVector, c::AbstractHypercubeBijector, y)
     @argcheck length(x) == dimension(c)
     _step_inverse!(x, firstindex(x), c, y)
     return x
 end
 
-function _inverse(c::AbstractHypercubeTransform, x)
+function _inverse(c::AbstractHypercubeBijector, x)
     return _inverse(has_cdf(c), c, x)
 end
 
-@inline function _inverse(::HasCDF, c::AbstractHypercubeTransform, x)
+@inline function _inverse(::HasCDF, c::AbstractHypercubeBijector, x)
     return cdf(dist(c), x)
 end
 
-@inline function _inverse(::NoCDF, c::AbstractHypercubeTransform, x)
+@inline function _inverse(::NoCDF, c::AbstractHypercubeBijector, x)
     throw("No cdf for distribution $(c.dist), implement _inverse manually")
 end

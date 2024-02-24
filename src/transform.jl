@@ -1,4 +1,20 @@
-abstract type AbstractHypercubeTransform <: TV.AbstractTransform end
+abstract type AbstractHypercubeBijector <: Bijectors.Bijector end
+
+
+struct ToFlat end
+struct ToCube end
+
+Bijectors.transform(d::Distributions.Distribution, ::ToCube) = Bijectors.TransformedDistribution(d, ascube(d))
+
+const HyperCubeTransformed = Bijectors.TransformedDistribution{<:Distribution, <:AbstractHypercubeBijector}
+
+# The transformed pdf is just th MV uniform distribution
+@inline Distributions.logpdf(::AbstractHypercubeBijector, x::AbstractVector) = zero(eltype(x))
+Base.rand(rng::AbstractRNG, d::AbstractHypercubeBijector) = rand(rng, eltype(d.dist), size(d.dist))
+Base.rand(d::AbstractHypercubeBijector) = rand(eltype(d.dist), size(d.dist))
+Base.rand(rng::AbstractRNG, td::AbstractHypercubeBijector, num_samples::Int) = rand(rng, eltype(td.dist), (size(td.dist)..., num_samples))
+Distributions._rand!(rng::AbstractRNG, ::AbstractHypercubeBijector, x::AbstractVector) = rand!(rng, x)
+
 
 
 
@@ -12,7 +28,7 @@ when construct the transformation.
 There are a few different behaviors depending on the type of the object.
 
  - If `c::Distribution` then this will store the distributions.
- - If `c::Tuple{AbstractHypercubeTransform}` then this will store the tuple
+ - If `c::Tuple{AbstractHypercubeBijector}` then this will store the tuple
 
 # Examples
 ```julia
@@ -25,7 +41,7 @@ ascube( (α = Uniform(), β = Normal()) )
 function ascube end
 
 """
-    $(FUNCTIONNAME)(c::AbstractHypercubeTransform, p)
+    $(FUNCTIONNAME)(c::AbstractHypercubeBijector, p)
 
 Transforms from the hypercube with coordinates `p`, to the parameter space
 defined by the transformation `c`.
@@ -42,7 +58,7 @@ no custom transformation exists then an error will be raised.
 function transform end
 
 
-struct ScalarHC{D} <: AbstractHypercubeTransform
+struct ScalarHC{D} <: AbstractHypercubeBijector
     dist::D
     ScalarHC(d) = new{typeof(d)}(d)
 end
@@ -58,7 +74,7 @@ dimension(::ScalarHC) = 1
 dist(d::ScalarHC) = d.dist
 ascube(d::Dists.UnivariateDistribution) = ScalarHC(d)
 
-struct EmptyTuple <: AbstractHypercubeTransform end
+struct EmptyTuple <: AbstractHypercubeBijector end
 dimension(::EmptyTuple) = 0
 ascube(::Tuple{}) = EmptyTuple()
 inverse_eltype(::EmptyTuple, ::Tuple{}) = Tuple{}
@@ -67,16 +83,16 @@ inverse_eltype(::EmptyTuple, ::Tuple{}) = Tuple{}
     $(SIGNATURES)
 Computes the transformation from the unit hypercube to the distribution space.
 """
-function transform(c::AbstractHypercubeTransform, x)
+function Bijectors.transform(c::AbstractHypercubeBijector, x)
     @argcheck dimension(c) == length(x)
     return _transform(has_quantile(c), c, x)
 end
 
-function _transform(::HasQuant, c::AbstractHypercubeTransform, x)
+function _transform(::HasQuant, c::AbstractHypercubeBijector, x)
     return quantile(dist(c), x)
 end
 
-function _transform(::NoQuant, c::AbstractHypercubeTransform, x)
+function _transform(::NoQuant, c::AbstractHypercubeBijector, x)
     throw("No quantile for distribution $(c.dist), implement transform manually")
 end
 
@@ -103,7 +119,7 @@ end
 
 
 
-abstract type VectorHC <: AbstractHypercubeTransform end
+abstract type VectorHC <: AbstractHypercubeBijector end
 
 function transform(c::VectorHC, x::AbstractVector)
     @argcheck dimension(c) == length(x)

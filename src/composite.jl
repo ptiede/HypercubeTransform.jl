@@ -1,4 +1,4 @@
-const NCube{N} = Tuple{Vararg{AbstractHypercubeTransform, N}}
+const NCube{N} = Tuple{Vararg{AbstractHypercubeBijector, N}}
 
 struct TupleHC{T} <: VectorHC
     transformations::T
@@ -55,7 +55,7 @@ end
 
 
 
-function TV.inverse_eltype(tt::TupleHC{<:Tuple}, y::Tuple)
+function inverse_eltype(tt::TupleHC{<:Tuple}, y::Tuple)
     transformations = tt.transformations
     @argcheck length(transformations) == length(y)
     _inverse_eltype_tuple(transformations, y)
@@ -79,7 +79,7 @@ function _step_transform(c::TupleHC{<:NamedTuple{N}}, x, index) where {N}
     NamedTuple{keys(transformations)}(y), index′
 end
 
-function TV.inverse_eltype(tt::TupleHC{<:NamedTuple}, y::NamedTuple)
+function inverse_eltype(tt::TupleHC{<:NamedTuple}, y::NamedTuple)
     transformations = tt.transformations
     @argcheck keys(transformations) == keys(y)
     _inverse_eltype_tuple(values(transformations), values(y))
