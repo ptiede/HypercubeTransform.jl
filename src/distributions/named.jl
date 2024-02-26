@@ -1,3 +1,39 @@
+export NamedDist
+
+struct TupleDist{N, D<:NTuple{N, Dists.Distribution}} <: Dists.ContinuousMultivariateDistribution
+    dists::D
+end
+
+Base.length(::TupleDist{N}) where {N} = N
+
+function Dists.logpdf(d::TupleDist{N}, x::Tuple) where {N}
+    dists = d.dists
+    sum(map((dist, acc) -> Dists.logpdf(dist, acc), dists, x))
+end
+
+function Dists.rand(rng::AbstractRNG, d::TupleDist{N}) where {N}
+    return ntuple(i->rand(rng, d.dists[i]), N)
+end
+
+function Dists.rand(rng::AbstractRNG, d::TupleDist, n::Int)
+    map(1:n) do _
+        rand(rng, d)
+    end
+end
+
+
+function Dists.rand(rng::AbstractRNG, d::TupleDist, n::Dims)
+    map(CartesianIndices(n)) do I
+        rand(rng, d)
+    end
+end
+
+HC.asflat(d::TupleDist{N}) where {N} = HC.asflat(d.dists)
+HC.ascube(d::TupleDist{N}) where {N} = HC.ascube(d.dists)
+
+
+
+
 struct NamedDist{Names, D} <: Dists.ContinuousMultivariateDistribution
     dists::D
 end
@@ -58,8 +94,6 @@ _distize(d::Tuple) = TupleDist(map(_distize, d))
 _distize(d::AbstractArray{<:Dists.Distribution}) = Dists.product_distribution(d)
 _distize(d::NamedTuple{N}) where {N} = NamedDist(NamedTuple{N}(map(_distize, d)))
 
-Base.merge(n1::NamedDist, n2::NamedDist) = NamedDist(merge(getfield(n1, :dists), getfield(n2, :dists)))
-
 
 function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{N}) where {N}
     vt = values(x)
@@ -89,10 +123,8 @@ function Dists.rand(rng::AbstractRNG, d::NamedDist{Na}, n::Dims) where {Na}
     end
 end
 
-Bijectors.bijector(d::NamedDist{N}) where {N} = Bijectors.NamedTransform(map(bijector, NamedTuple{N}(getfield(d, :dists))))
-ascube(d::NamedDist{N}) where {N} = HC.ascube(NamedTuple{N}(getfield(d, :dists)))
+HC.asflat(d::NamedDist{N}) where {N} = HC.asflat(NamedTuple{N}(getfield(d, :dists)))
+HC.ascube(d::NamedDist{N}) where {N} = HC.ascube(NamedTuple{N}(getfield(d, :dists)))
 
-function Dists.logpdf(d::Bijectors.TransformedDistribution{<:NamedDist}, x::NamedTuple)
-    y, logjac = with_logabsdet_jacobian(inverse(d.transform), x)
-    return Dists.logpdf(d.dist, y) + logjac
-end
+# DensityInterface.DensityKind(::NamedDist) = DensityInterface.IsDensity()
+# DensityInterface.logdensityof(d::NamedDist, x) = Dists.logpdf(d, x)

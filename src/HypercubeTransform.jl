@@ -10,20 +10,24 @@ using PDMats: unwhiten, whiten
 using Tricks: static_hasmethod
 using DocStringExtensions
 using Bijectors
-import Bijectors: transform, bijector
-using ChangesOfVariables: ChangesOfVariables, with_logabsdet_jacobian
+import Bijectors: transform, transform!, bijector, isinvertible, output_length, output_size,
+                  with_logabsdet_jacobian, with_logabsdet_jacobian!, logabsdetjac, logabsdetjac!,
+                  TransformDistribution
 using InverseFunctions: inverse
 using Random: AbstractRNG
 using PrecompileTools
 
-export transform, inverse, dimension, ascube, asflat, transform_and_logjac, transform_logdensity, NamedDist
+export transform, inverse, transport, FromCube, FromFlat, NamedDist, ComponentDist
 
+include("interface.jl")
 include("utility.jl")
-include("transform.jl")
-include("inverse.jl")
-include("composite.jl")
+include("hypercube/transform.jl")
+include("hypercube/inverse.jl")
+include("hypercube/composite.jl")
 include("asflat.jl")
-include("named.jl")
+include("flat/component.jl")
+include("distributions/named.jl")
+include("distributions/component.jl")
 
 
 @setup_workload begin
