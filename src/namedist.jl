@@ -1,4 +1,4 @@
-export NamedDist
+export NamedDist, TupleDist
 
 struct TupleDist{N, D<:NTuple{N, Dists.Distribution}} <: Dists.ContinuousMultivariateDistribution
     dists::D
