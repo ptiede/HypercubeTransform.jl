@@ -77,3 +77,29 @@ end
     @test length(rand(d1, 2)) == 2
     @test size(rand(d1, 2, 3)) == (2, 3)
 end
+
+@testset "ComponentDist" begin
+    dnt = NamedDist((a=Normal(), b = Uniform(), c = MvNormal(ones(2))))
+    dcm = ComponentDist((a=Normal(), b = Uniform(), c = MvNormal(ones(2))))
+    @test propertynames(dcm) == (:a, :b, :c)
+    @test dcm.a == Normal()
+    x1 = rand(dcm)
+    @test rand(dcm) isa ComponentArray
+    @test logpdf(dcm, x1) ≈ logpdf(dcm.a, x1.a) + logpdf(dcm.b, x1.b) + logpdf(dcm.c, x1.c)
+
+    dists = getfield(dcm, :dists)
+    xt = ComponentArray((b = 0.5, a = 1.0, c = [-0.5, 0.6]))
+    @test logpdf(dcm, xt) ≈ logpdf(dcm.a, xt.a) + logpdf(dcm.b, xt.b) + logpdf(dcm.c, xt.c)
+    @test logpdf(dcm, xt) ≈ logpdf(dnt, NamedTuple(xt))
+    d2 = NamedDist(a=(Uniform(), Normal()), b = Beta(), c = [Uniform(), Uniform()], d = (a=Normal(), b = ImageUniform(2, 2)))
+    @inferred logdensityof(d2, rand(d2))
+    p0 = (a=(0.5, 0.5), b = 0.5, c = [0.25, 0.75], d = (a = 0.1, b = fill(0.1, 2, 2)))
+    @test typeof(p0) == typeof(rand(d2))
+    tf = asflat(d2)
+    # tc = ascube(d2)
+    @inferred TV.transform(tf, randn(dimension(tf)))
+    # @inferred TV.transform(tc, rand(dimension(tc)))
+    show(dcm)
+    show(d2)
+
+end

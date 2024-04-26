@@ -1,9 +1,11 @@
 module HypercubeTransform
 
 using ArgCheck: @argcheck
+using ChainRulesCore
 import Distributions
 const Dists = Distributions
 using Distributions: quantile, cdf
+using Enzyme: autodiff, Duplicated, Const, Reverse, Active
 using LinearAlgebra
 using PDMats: unwhiten, whiten
 using Tricks: static_hasmethod
