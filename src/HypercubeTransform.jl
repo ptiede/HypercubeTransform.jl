@@ -21,6 +21,7 @@ include("transform.jl")
 include("inverse.jl")
 include("composite.jl")
 include("asflat.jl")
+include("namedist.jl")
 
 
 @setup_workload begin
