@@ -44,26 +44,26 @@ using Test
 end
 
 @testset "NamedDist" begin
-    d1 = NamedDist((a=Normal(), b = Uniform(), c = MvNormal(ones(2))))
+    d1 = NamedDist((a=Dists.Normal(), b = Dists.Uniform(), c = Dists.MvNormal(ones(2))))
     @test propertynames(d1) == (:a, :b, :c)
-    @test d1.a == Normal()
+    @test d1.a == Dists.Normal()
     x1 = rand(d1)
     @test rand(d1, 2) isa Vector{<:NamedTuple}
     @test size(rand(d1, 2)) == (2,)
     rand(d1, 20, 21)
-    @test logpdf(d1, x1) ≈ logpdf(d1.a, x1.a) + logpdf(d1.b, x1.b) + logpdf(d1.c, x1.c)
+    @test Dists.logpdf(d1, x1) ≈ Dists.logpdf(d1.a, x1.a) + Dists.logpdf(d1.b, x1.b) + Dists.logpdf(d1.c, x1.c)
 
     dists = getfield(d1, :dists)
     xt = (b = 0.5, a = 1.0, c = [-0.5, 0.6])
-    @test logpdf(d1, xt) ≈ logpdf(d1.a, xt.a) + logpdf(d1.b, xt.b) + logpdf(d1.c, xt.c)
+    @test Dists.logpdf(d1, xt) ≈ Dists.logpdf(d1.a, xt.a) + Dists.logpdf(d1.b, xt.b) + Dists.logpdf(d1.c, xt.c)
 
-    d2 = NamedDist(a=(Uniform(), Normal()), b = Beta(), c = [Uniform(), Uniform()], d = (a=Normal(), b = ImageUniform(2, 2)))
-    @inferred logdensityof(d2, rand(d2))
-    p0 = (a=(0.5, 0.5), b = 0.5, c = [0.25, 0.75], d = (a = 0.1, b = fill(0.1, 2, 2)))
+    d2 = NamedDist(a=(Dists.Uniform(), Dists.Normal()), b = Dists.Beta(), c = [Dists.Uniform(), Dists.Uniform()], d = (a=Dists.Normal(), b = Dists.MvNormal(ones(2))))
+    @inferred Dists.logpdf(d2, rand(d2))
+    p0 = (a=(0.5, 0.5), b = 0.5, c = [0.25, 0.75], d = (a = 0.1, b = fill(0.1, 2)))
     @test typeof(p0) == typeof(rand(d2))
     tf = asflat(d2)
     # tc = ascube(d2)
-    @inferred TV.transform(tf, randn(dimension(tf)))
+    @inferred transform(tf, randn(dimension(tf)))
     # @inferred TV.transform(tc, rand(dimension(tc)))
     show(d1)
     show(d2)

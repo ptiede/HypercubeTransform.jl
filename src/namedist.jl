@@ -1,5 +1,11 @@
 export NamedDist, TupleDist
 
+"""
+    TupleDist(d::NTuple{N, <:Dists.Distribution})
+
+Creates a multivariate distribution whose backing is a tuple. This is useful for
+small inhomogenous distributions.
+"""
 struct TupleDist{N, D<:NTuple{N, Dists.Distribution}} <: Dists.ContinuousMultivariateDistribution
     dists::D
 end
@@ -28,8 +34,8 @@ function Dists.rand(rng::AbstractRNG, d::TupleDist, n::Dims)
     end
 end
 
-HC.asflat(d::TupleDist{N}) where {N} = HC.asflat(d.dists)
-HC.ascube(d::TupleDist{N}) where {N} = HC.ascube(d.dists)
+asflat(d::TupleDist{N}) where {N} = asflat(d.dists)
+ascube(d::TupleDist{N}) where {N} = ascube(d.dists)
 
 
 struct NamedDist{Names, D} <: Dists.ContinuousMultivariateDistribution
@@ -121,8 +127,8 @@ function Dists.rand(rng::AbstractRNG, d::NamedDist{Na}, n::Dims) where {Na}
     end
 end
 
-HC.asflat(d::NamedDist{N}) where {N} = HC.asflat(NamedTuple{N}(getfield(d, :dists)))
-HC.ascube(d::NamedDist{N}) where {N} = HC.ascube(NamedTuple{N}(getfield(d, :dists)))
+asflat(d::NamedDist{N}) where {N} = asflat(NamedTuple{N}(getfield(d, :dists)))
+ascube(d::NamedDist{N}) where {N} = ascube(NamedTuple{N}(getfield(d, :dists)))
 
 # DensityInterface.DensityKind(::NamedDist) = DensityInterface.IsDensity()
 # DensityInterface.logdensityof(d::NamedDist, x) = Dists.logpdf(d, x)
