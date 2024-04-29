@@ -132,3 +132,26 @@ ascube(d::NamedDist{N}) where {N} = ascube(NamedTuple{N}(getfield(d, :dists)))
 
 # DensityInterface.DensityKind(::NamedDist) = DensityInterface.IsDensity()
 # DensityInterface.logdensityof(d::NamedDist, x) = Dists.logpdf(d, x)
+
+
+# This is if I want to use Enzyme for everything
+# @noinline _logpdf_ntdist(d::NamedDist, x::Ref{<:NamedTuple}) = Dists.logpdf(d, x[])
+
+# function ChainRulesCore.rrule(::typeof(Dists.logpdf), d::NamedDist{N}, x::NamedTuple{N}) where {N}
+#     out = Dists.logpdf(d, x)
+#     function _lpdf_ndist(Δ)
+#         xr = Ref(x)
+#         Δx = Ref(Enzyme.make_zero(x))
+#         # You need to wrap the NamedTuple because it may have mixed activity
+#         # see https://github.com/EnzymeAD/Enzyme.jl/issues/1316
+#         autodiff(Reverse, _logpdf_ntdist, Active, Const(d), Duplicated(xr, Δx))
+#         Δx2 = _apply_dy(Δ, Δx[])
+#         return NoTangent(), NoTangent(), Tangent{typeof(x)}(;Δx2...)
+#     end
+#     return out, _lpdf_ndist
+# end
+
+# _apply_dy(Δ::Number, x::NamedTuple) = map(x->_apply_dy(Δ, x), x)
+# _apply_dy(Δ::Number, x::Tuple) = map(x->_apply_dy(Δ, x), x)
+# # _apply_dy(Δ::Number, x::AbstractArray) = ((x .= Δ*x); x)
+# _apply_dy(Δ::Number, x) = Δ*x
