@@ -112,6 +112,17 @@ end
 
 function asflat(d::ComponentDist{N}) where {N}
     dists = getfield(d, :dists)
-    trfs = HC.asflat(NamedTuple{N}(fieldvalues(dists))).transformations
+    trfs = asflat(NamedTuple{N}(fieldvalues(dists))).transformations
     return TV.as(getfield(d, :axis), trfs)
+end
+
+function Base.show(io::IO, d::ComponentDist{N}) where {N}
+    dists = getfield(d, :dists)
+    println(io, "ComponentDist(")
+    if length(N) < 4
+        show(io, NamedTuple{N}(getfield(d, :dists)))
+    else
+        println(io, "($(N[1]) = $(dists[1]), $(N[2]) = $(dists[2]), $(N[3]) = $(dists[3]), ...)")
+    end
+    println(io, ")")
 end

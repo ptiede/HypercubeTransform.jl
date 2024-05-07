@@ -5,7 +5,8 @@ using ChainRulesCore
 import Distributions
 const Dists = Distributions
 using Distributions: quantile, cdf
-using Enzyme: autodiff, Duplicated, Const, Reverse, Active
+using Enzyme: Enzyme, autodiff, Duplicated, Const, Reverse, Active
+Enzyme.API.runtimeActivity!(true)
 using LinearAlgebra
 using PDMats: unwhiten, whiten
 using Tricks: static_hasmethod
@@ -24,7 +25,8 @@ include("inverse.jl")
 include("composite.jl")
 include("asflat.jl")
 include("namedist.jl")
-
+include("componentdist.jl")
+include("component_transform.jl")
 
 @setup_workload begin
     a = Dists.Normal()

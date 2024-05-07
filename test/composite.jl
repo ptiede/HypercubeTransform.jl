@@ -2,6 +2,10 @@ import Distributions
 const Dists = Distributions
 using HypercubeTransform
 using Test
+using ComponentArrays
+using Zygote
+using ComponentArrays
+
 
 
 @testset "TupleHC" begin
@@ -79,27 +83,45 @@ end
 end
 
 @testset "ComponentDist" begin
-    dnt = NamedDist((a=Normal(), b = Uniform(), c = MvNormal(ones(2))))
-    dcm = ComponentDist((a=Normal(), b = Uniform(), c = MvNormal(ones(2))))
-    @test propertynames(dcm) == (:a, :b, :c)
-    @test dcm.a == Normal()
-    x1 = rand(dcm)
-    @test rand(dcm) isa ComponentArray
-    @test logpdf(dcm, x1) ≈ logpdf(dcm.a, x1.a) + logpdf(dcm.b, x1.b) + logpdf(dcm.c, x1.c)
+    dnt = NamedDist((a=Dists.Normal(), b = Dists.Uniform(), c = Dists.MvNormal(ones(2))))
+    dcp = ComponentDist((a=Dists.Normal(), b = Dists.Uniform(), c = Dists.MvNormal(ones(2))))
+    @test propertynames(dcp) == (:a, :b, :c)
+    @test dcp.a == Dists.Normal()
+    x1 = rand(dcp)
+    @test rand(dcp) isa ComponentArray
+    @test Dists.logpdf(dcp, x1) ≈ Dists.logpdf(dcp.a, x1.a) + Dists.logpdf(dcp.b, x1.b) + Dists.logpdf(dcp.c, x1.c)
 
-    dists = getfield(dcm, :dists)
+    dists = getfield(dcp, :dists)
     xt = ComponentArray((b = 0.5, a = 1.0, c = [-0.5, 0.6]))
-    @test logpdf(dcm, xt) ≈ logpdf(dcm.a, xt.a) + logpdf(dcm.b, xt.b) + logpdf(dcm.c, xt.c)
-    @test logpdf(dcm, xt) ≈ logpdf(dnt, NamedTuple(xt))
-    d2 = NamedDist(a=(Uniform(), Normal()), b = Beta(), c = [Uniform(), Uniform()], d = (a=Normal(), b = ImageUniform(2, 2)))
-    @inferred logdensityof(d2, rand(d2))
-    p0 = (a=(0.5, 0.5), b = 0.5, c = [0.25, 0.75], d = (a = 0.1, b = fill(0.1, 2, 2)))
-    @test typeof(p0) == typeof(rand(d2))
-    tf = asflat(d2)
-    # tc = ascube(d2)
-    @inferred TV.transform(tf, randn(dimension(tf)))
-    # @inferred TV.transform(tc, rand(dimension(tc)))
-    show(dcm)
-    show(d2)
+    @test Dists.logpdf(dcp, xt) ≈ Dists.logpdf(dcp.a, xt.a) + Dists.logpdf(dcp.b, xt.b) + Dists.logpdf(dcp.c, xt.c)
+    @test Dists.logpdf(dcp, xt) ≈ Dists.logpdf(dnt, NamedTuple(xt))
 
+    # Now test gradients
+    tcp = asflat(dcp)
+    tnt = asflat(dnt)
+
+    fcp = let tcp = tcp, dcp = dcp
+        x->begin
+            y, lj = transform_and_logjac(tcp, x)
+            return logpdf(dcp, y) + lj
+            end
+        end
+
+    fnt = let tnt = tnt, dnt = dnt
+        x->begin
+               y, lj = transform_and_logjac(tnt, x)
+               return logpdf(dnt, y) + lj
+            end
+        end
+
+    show(IOBuffer(), dcp)
+    show(IOBuffer(), tcp)
+
+    x = randn(dimension(tcp))
+    @test fcp(x) ≈ fnt(x)
+
+    gcp, = Zygote.gradient(fcp, x)
+    gnt, = Zygote.gradient(fnt, x)
+
+    @test gcp ≈ gnt
 end
