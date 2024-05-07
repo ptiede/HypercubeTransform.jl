@@ -2,6 +2,10 @@ import Distributions
 const Dists = Distributions
 using HypercubeTransform
 using Test
+using ComponentArrays
+using Zygote
+using ComponentArrays
+
 
 
 @testset "TupleHC" begin
@@ -76,4 +80,48 @@ end
     @test length(d1) == 3
     @test length(rand(d1, 2)) == 2
     @test size(rand(d1, 2, 3)) == (2, 3)
+end
+
+@testset "ComponentDist" begin
+    dnt = NamedDist((a=Dists.Normal(), b = Dists.Uniform(), c = Dists.MvNormal(ones(2))))
+    dcp = ComponentDist((a=Dists.Normal(), b = Dists.Uniform(), c = Dists.MvNormal(ones(2))))
+    @test propertynames(dcp) == (:a, :b, :c)
+    @test dcp.a == Dists.Normal()
+    x1 = rand(dcp)
+    @test rand(dcp) isa ComponentArray
+    @test Dists.logpdf(dcp, x1) ≈ Dists.logpdf(dcp.a, x1.a) + Dists.logpdf(dcp.b, x1.b) + Dists.logpdf(dcp.c, x1.c)
+
+    dists = getfield(dcp, :dists)
+    xt = ComponentArray((b = 0.5, a = 1.0, c = [-0.5, 0.6]))
+    @test Dists.logpdf(dcp, xt) ≈ Dists.logpdf(dcp.a, xt.a) + Dists.logpdf(dcp.b, xt.b) + Dists.logpdf(dcp.c, xt.c)
+    @test Dists.logpdf(dcp, xt) ≈ Dists.logpdf(dnt, NamedTuple(xt))
+
+    # Now test gradients
+    tcp = asflat(dcp)
+    tnt = asflat(dnt)
+
+    fcp = let tcp = tcp, dcp = dcp
+        x->begin
+            y, lj = transform_and_logjac(tcp, x)
+            return Dists.logpdf(dcp, y) + lj
+            end
+        end
+
+    fnt = let tnt = tnt, dnt = dnt
+        x->begin
+               y, lj = transform_and_logjac(tnt, x)
+               return Dists.logpdf(dnt, y) + lj
+            end
+        end
+
+    show(IOBuffer(), dcp)
+    show(IOBuffer(), tcp)
+
+    x = randn(dimension(tcp))
+    @test fcp(x) ≈ fnt(x)
+
+    gcp, = Zygote.gradient(fcp, x)
+    gnt, = Zygote.gradient(fnt, x)
+
+    @test gcp ≈ gnt
 end
