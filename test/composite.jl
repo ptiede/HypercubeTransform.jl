@@ -103,14 +103,14 @@ end
     fcp = let tcp = tcp, dcp = dcp
         x->begin
             y, lj = transform_and_logjac(tcp, x)
-            return logpdf(dcp, y) + lj
+            return Dists.logpdf(dcp, y) + lj
             end
         end
 
     fnt = let tnt = tnt, dnt = dnt
         x->begin
                y, lj = transform_and_logjac(tnt, x)
-               return logpdf(dnt, y) + lj
+               return Dists.logpdf(dnt, y) + lj
             end
         end
 
