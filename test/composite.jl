@@ -91,6 +91,8 @@ end
     @test rand(dcp) isa ComponentArray
     @test Dists.logpdf(dcp, x1) ≈ Dists.logpdf(dcp.a, x1.a) + Dists.logpdf(dcp.b, x1.b) + Dists.logpdf(dcp.c, x1.c)
 
+
+
     dists = getfield(dcp, :dists)
     xt = ComponentArray((b = 0.5, a = 1.0, c = [-0.5, 0.6]))
     @test Dists.logpdf(dcp, xt) ≈ Dists.logpdf(dcp.a, xt.a) + Dists.logpdf(dcp.b, xt.b) + Dists.logpdf(dcp.c, xt.c)
@@ -114,14 +116,24 @@ end
             end
         end
 
-    show(IOBuffer(), dcp)
-    show(IOBuffer(), tcp)
+    show(IOBuffer(), MIME"text/plain"(), dcp)
+    show(IOBuffer(), MIME"text/plain"(), tcp)
 
     x = randn(dimension(tcp))
     @test fcp(x) ≈ fnt(x)
+
+    @test inverse(tcp, transform(tcp, x)) ≈ x
 
     gcp, = Zygote.gradient(fcp, x)
     gnt, = Zygote.gradient(fnt, x)
 
     @test gcp ≈ gnt
+
+    d2 = ComponentDist(a=(Dists.Uniform(), Dists.Normal()), b = Dists.Beta(), c = [Dists.Uniform(), Dists.Uniform()], d = (a=Dists.Normal(), b = Dists.MvNormal(ones(2))))
+    @inferred Dists.logpdf(d2, rand(d2))
+    p0 = ComponentVector((a=(0.5, 0.5), b = 0.5, c = [0.25, 0.75], d = (a = 0.1, b = fill(0.1, 2))))
+    @test typeof(p0) == typeof(rand(d2))
+    tf = asflat(d2)
+    @inferred transform(tf, randn(dimension(tf)))
+
 end

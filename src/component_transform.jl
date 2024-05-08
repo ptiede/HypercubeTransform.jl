@@ -32,7 +32,7 @@ function TV.inverse_at!(x, index, t::ComponentTransform{T}, y::ComponentArray) w
         yn = getproperty(y, n)
         tn = getproperty(t.transformations, n)
         ycn = convert_comp_to_ttype(tn, yn)
-        index = inverse_at!(x, index, tn, ycn)
+        index = TV.inverse_at!(x, index, tn, ycn)
     end
     return index
 end
