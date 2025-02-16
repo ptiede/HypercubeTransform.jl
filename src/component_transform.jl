@@ -79,26 +79,6 @@ Base.@constprop :aggressive getvalproperty(tt::NamedTuple, k) = getproperty(tt, 
     end
 end
 
-function ChainRulesCore.rrule(::typeof(_transform_components), flag::TV.LogJacFlag, tt::ComponentTransform, x, index)
-    data, index2 = _transform_components(flag, tt, x, index)
-    px = ProjectTo(x)
-    function _transform_components_pullback(Δ)
-        Δdata = similar(data)
-        Δdata .= unthunk(Δ[1])
-        dd = zero(data)
-
-        Δf = NoTangent()
-        Δflag = NoTangent()
-        Δt = NoTangent()
-        Δindex = NoTangent()
-        axes = tt.axes
-        trfs = tt.transformations
-        Δx = zero(x)
-        autodiff(Reverse, transform_components!, Const, Duplicated(dd, Δdata), Const(axes), Const(flag), Const(trfs), Duplicated(x, Δx), Const(index))
-        return (Δf, Δflag, Δt, px(Δx), Δindex)
-    end
-    return (data, index2), _transform_components_pullback
-end
 
 function TV._summary_rows(transformation::ComponentTransform, mime)
     (;transformations) = transformation
