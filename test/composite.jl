@@ -122,11 +122,11 @@ end
 
     @test inverse(tcp, transform(tcp, x)) ≈ x
 
-    d2 = ComponentDist(a=(Dists.Uniform(), Dists.Normal()), b = Dists.Beta(), c = [Dists.Uniform(), Dists.Uniform()], d = (a=Dists.Normal(), b = Dists.MvNormal(ones(2))))
-    @inferred Dists.logpdf(d2, rand(d2))
-    p0 = ComponentVector((a=(0.5, 0.5), b = 0.5, c = [0.25, 0.75], d = (a = 0.1, b = fill(0.1, 2))))
-    @test typeof(p0) == typeof(rand(d2))
-    tf = asflat(d2)
-    @inferred transform(tf, randn(dimension(tf)))
+    # d2 = ComponentDist(a=(Dists.Uniform(), Dists.Normal()), b = Dists.Beta(), c = [Dists.Uniform(), Dists.Uniform()], d = (a=Dists.Normal(), b = Dists.MvNormal(ones(2))))
+    # @inferred Dists.logpdf(d2, rand(d2))
+    # p0 = ComponentVector((a=(0.5, 0.5), b = 0.5, c = [0.25, 0.75], d = (a = 0.1, b = fill(0.1, 2))))
+    # @test typeof(p0) == typeof(rand(d2))
+    # tf = asflat(d2)
+    # @inferred transform(tf, randn(dimension(tf)))
 
 end

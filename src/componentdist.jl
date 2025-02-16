@@ -48,8 +48,7 @@ function ComponentDist(d::NamedTuple{N}) where {N}
 end
 
 _distize_comp(d::Dists.Distribution) = d
-_distize_comp(d::NTuple{N, <:Dists.Distribution}) where {N} = TupleDist(d)
-_distize_comp(d::Tuple) = Dists.product_distribution(map(_distize, d)...)
+_distize_comp(::Tuple) = throw(ArgumentError("Tuple is not currently supported"))
 _distize_comp(d::AbstractArray{<:Dists.Distribution}) = Dists.product_distribution(d)
 _distize_comp(d::NamedTuple{N}) where {N} = ComponentDist(NamedTuple{N}(map(_distize_comp, d)))
 
@@ -85,10 +84,11 @@ flexible_setproperty!(d::ComponentVector, ::Val{k}, v) where {k} = setproperty!(
         return nothing
     end
 end
-function flexible_setproperty!(d::ComponentVector, ::Val{k}, v::Tuple) where {k}
-    @info getproperty(d, k)
+# function flexible_setproperty!(d::ComponentVector, ::Val{k}, v::NTuple{N}) where {k,N}
+#     ntuple(Val(N)) do n
 
-end
+#     end
+# end
 
 function Dists.rand(rng::AbstractRNG, d::ComponentDist)
     x = ComponentVector(zeros(length(d)), getfield(d, :axis))
