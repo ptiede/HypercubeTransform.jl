@@ -56,21 +56,6 @@ _distize_comp(d::NamedTuple{N}) where {N} = ComponentDist(NamedTuple{N}(map(_dis
 
 ComponentDist(;kwargs...) = ComponentDist((;kwargs...))
 
-function ChainRulesCore.rrule(
-    ::typeof(Dists.logpdf),
-    d::ComponentDist{N}, x::ComponentArray) where {N}
-
-    out = Dists.logpdf(d, x)
-
-    function _logpdf_pullback_componentdist(Δ)
-        dx = zero(x)
-        # dd = copy(d)
-        autodiff(Reverse, Dists.logpdf, Const(d), Duplicated(x, dx))
-        return NoTangent(), NoTangent(), Δ*dx
-    end
-    return out, _logpdf_pullback_componentdist
-end
-
 tangent_set_proprerty!(x::ComponentArray, ::Val{k}, v) where {k} = setproperty!(x, Val(k), v)
 tangent_set_proprerty!(x::ComponentArray, ::Val{k}, v::ZeroTangent) where {k} = setproperty!(x, Val(k), 0)
 tangent_set_proprerty!(x::ComponentArray, ::Val{k}, v::NoTangent) where {k} = setproperty!(x, Val(k), 0)

@@ -5,8 +5,6 @@ using ChainRulesCore
 import Distributions
 const Dists = Distributions
 using Distributions: quantile, cdf
-using Enzyme: Enzyme, autodiff, Duplicated, Const, Reverse, Active
-Enzyme.API.runtimeActivity!(true)
 using LinearAlgebra
 using PDMats: unwhiten, whiten
 using Tricks: static_hasmethod

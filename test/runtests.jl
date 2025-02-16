@@ -3,7 +3,6 @@ using HypercubeTransform
 import Distributions
 const Dists = Distributions
 using Statistics
-using Zygote
 using ComponentArrays
 
 using Test

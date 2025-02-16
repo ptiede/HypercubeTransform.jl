@@ -3,8 +3,6 @@ const Dists = Distributions
 using HypercubeTransform
 using Test
 using ComponentArrays
-using Zygote
-using ComponentArrays
 
 
 
@@ -123,11 +121,6 @@ end
     @test fcp(x) ≈ fnt(x)
 
     @test inverse(tcp, transform(tcp, x)) ≈ x
-
-    gcp, = Zygote.gradient(fcp, x)
-    gnt, = Zygote.gradient(fnt, x)
-
-    @test gcp ≈ gnt
 
     d2 = ComponentDist(a=(Dists.Uniform(), Dists.Normal()), b = Dists.Beta(), c = [Dists.Uniform(), Dists.Uniform()], d = (a=Dists.Normal(), b = Dists.MvNormal(ones(2))))
     @inferred Dists.logpdf(d2, rand(d2))
