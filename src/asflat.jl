@@ -30,9 +30,9 @@ end
 @inline asflat(d::Dists.MvLogNormal) = as(Vector, as(Real, 0, ∞), length(d))
 @inline asflat(::Dists.LogNormal) = as(Real, 0, ∞)
 
-@inline function asflat(d::Dists.Product{A,T,V}) where {A,T<:Dists.ContinuousUnivariateDistribution, V}
+@inline function asflat(d::Dists.Product{A, T, V}) where {A, T <: Dists.ContinuousUnivariateDistribution, V}
     @assert !Base.isabstracttype(T) "$d is abstract type this isn't a homogenous product dist which isn't currently supported"
-    as(Vector, asflat(first(d.v)), length(d.v))
+    return as(Vector, asflat(first(d.v)), length(d.v))
 end
 
 @inline asflat(d::NamedTuple) = as(prototype(d)(asflat.(fieldvalues(d))))

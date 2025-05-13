@@ -16,7 +16,7 @@ using Test
     ]
     res = map(tests) do t
         @eval module $(Symbol("Test_", t))
-            include($t*".jl")
+        include($t * ".jl")
         end
         return
     end

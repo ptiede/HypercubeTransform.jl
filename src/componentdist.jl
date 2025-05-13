@@ -44,7 +44,7 @@ function ComponentDist(d::NamedTuple{N}) where {N}
     d = values(d)
     dd = map(_distize_comp, d)
     axis = getaxes(ComponentVector(NamedTuple{N}(map(rand, dd))))
-    return ComponentDist{N,typeof(dd), typeof(axis)}(dd, axis)
+    return ComponentDist{N, typeof(dd), typeof(axis)}(dd, axis)
 end
 
 _distize_comp(d::Dists.Distribution) = d
@@ -53,7 +53,7 @@ _distize_comp(d::AbstractArray{<:Dists.Distribution}) = Dists.product_distributi
 _distize_comp(d::NamedTuple{N}) where {N} = ComponentDist(NamedTuple{N}(map(_distize_comp, d)))
 
 
-ComponentDist(;kwargs...) = ComponentDist((;kwargs...))
+ComponentDist(; kwargs...) = ComponentDist((; kwargs...))
 
 tangent_set_proprerty!(x::ComponentArray, ::Val{k}, v) where {k} = setproperty!(x, Val(k), v)
 tangent_set_proprerty!(x::ComponentArray, ::Val{k}, v::ZeroTangent) where {k} = setproperty!(x, Val(k), 0)
@@ -113,5 +113,5 @@ function Base.show(io::IO, d::ComponentDist{N}) where {N}
     else
         println(io, "($(N[1]) = $(dists[1]), $(N[2]) = $(dists[2]), $(N[3]) = $(dists[3]), ...)")
     end
-    println(io, ")")
+    return println(io, ")")
 end

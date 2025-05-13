@@ -2,9 +2,10 @@ struct ComponentTransform{T, Ax} <: TV.VectorTransform
     transformations::T
     axes::Ax
     dimension::Int
-    function ComponentTransform(transformations::T, ax
-                            ) where {N, S <: TV.NTransforms, T <: NamedTuple{N, S}}
-        new{T, typeof(ax)}(transformations, ax, _sum_dimensions(transformations))
+    function ComponentTransform(
+            transformations::T, ax
+        ) where {N, S <: TV.NTransforms, T <: NamedTuple{N, S}}
+        return new{T, typeof(ax)}(transformations, ax, _sum_dimensions(transformations))
     end
 end
 
@@ -15,7 +16,7 @@ TV.as(ax::Tuple{Axis}, transformations) = ComponentTransform(transformations, ax
 
 function TV.transform_with(flag::TV.LogJacFlag, tt::ComponentTransform, x::AbstractVector, index)
     data, index2 = _transform_components(flag, tt, x, index)
-    out = ComponentVector(data[begin:end-1], tt.axes)
+    out = ComponentVector(data[begin:(end - 1)], tt.axes)
     ℓ = TV.logjac_zero(flag, eltype(out))
     if flag isa TV.LogJac
         ℓ = data[end]
@@ -27,7 +28,7 @@ function TV.inverse_eltype(::ComponentTransform, ::ComponentVector{T}) where {T}
     return T
 end
 
-function TV.inverse_at!(x, index, t::ComponentTransform{T}, y::ComponentArray) where {N, T<:NamedTuple{N}}
+function TV.inverse_at!(x, index, t::ComponentTransform{T}, y::ComponentArray) where {N, T <: NamedTuple{N}}
     for n in N
         yn = getproperty(y, n)
         tn = getproperty(t.transformations, n)
@@ -40,14 +41,13 @@ end
 convert_comp_to_ttype(t, x) = x
 convert_comp_to_ttype(::TV.TransformTuple{<:Tuple}, x::Array) = Tuple(x)
 function convert_comp_to_ttype(::TV.TransformTuple{<:NamedTuple{N}}, x::ComponentArray) where {N}
-    NamedTuple(x)
+    return NamedTuple(x)
 end
 
 
-
 function _transform_components(flag::TV.LogJacFlag, tt::ComponentTransform, x, index)
-    (;transformations, axes) = tt
-    data = similar(x, lastindex(axes[1])+1)
+    (; transformations, axes) = tt
+    data = similar(x, lastindex(axes[1]) + 1)
     data[end] = 0
     index2 = transform_components!(data, axes, flag, transformations, x, index)
     return data, index2
@@ -58,7 +58,7 @@ Base.@constprop :aggressive getvalproperty(tt::NamedTuple, k) = getproperty(tt, 
 
 @generated function transform_components!(data, axis, flag::TV.LogJacFlag, transformation::NamedTuple{N}, x, index) where {N}
     exprs = []
-    push!(exprs, :(out = ComponentVector(@view(data[begin:end-1]), axis)))
+    push!(exprs, :(out = ComponentVector(@view(data[begin:(end - 1)]), axis)))
     for k in N
         trf_sym = Symbol("trf_$k")
         y_sym = Symbol("y_$k")
@@ -81,17 +81,21 @@ end
 
 
 function TV._summary_rows(transformation::ComponentTransform, mime)
-    (;transformations) = transformation
+    (; transformations) = transformation
     repr1 = "ComponentArray of transformations"
     rows = TV._summary_row(transformation, repr1)
     _index = 0
     for (key, t) in pairs(transformations)
         for row in TV._summary_rows(t, mime)
             _repr = row.level == 1 ? (repr(key) * " → " * row.repr) : row.repr
-            push!(rows, (level = row.level + 1, indices = TV._offset(row.indices, _index),
-                         repr = _repr))
+            push!(
+                rows, (
+                    level = row.level + 1, indices = TV._offset(row.indices, _index),
+                    repr = _repr,
+                )
+            )
         end
         _index += TV.dimension(t)
     end
-    rows
+    return rows
 end

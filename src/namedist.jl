@@ -6,7 +6,7 @@ export NamedDist, TupleDist
 Creates a multivariate distribution whose backing is a tuple. This is useful for
 small inhomogenous distributions.
 """
-struct TupleDist{N, D<:NTuple{N, Dists.Distribution}} <: Dists.ContinuousMultivariateDistribution
+struct TupleDist{N, D <: NTuple{N, Dists.Distribution}} <: Dists.ContinuousMultivariateDistribution
     dists::D
 end
 
@@ -14,22 +14,22 @@ Base.length(::TupleDist{N}) where {N} = N
 
 function Dists.logpdf(d::TupleDist{N}, x::Tuple) where {N}
     dists = d.dists
-    sum(map((dist, acc) -> Dists.logpdf(dist, acc), dists, x))
+    return sum(map((dist, acc) -> Dists.logpdf(dist, acc), dists, x))
 end
 
 function Dists.rand(rng::AbstractRNG, d::TupleDist{N}) where {N}
-    return ntuple(i->rand(rng, d.dists[i]), N)
+    return ntuple(i -> rand(rng, d.dists[i]), N)
 end
 
 function Dists.rand(rng::AbstractRNG, d::TupleDist, n::Int)
-    map(1:n) do _
+    return map(1:n) do _
         rand(rng, d)
     end
 end
 
 
 function Dists.rand(rng::AbstractRNG, d::TupleDist, n::Dims)
-    map(CartesianIndices(n)) do I
+    return map(CartesianIndices(n)) do I
         rand(rng, d)
     end
 end
@@ -75,14 +75,14 @@ public interface.
 function NamedDist(d::NamedTuple{N}) where {N}
     d = values(d)
     dd = map(_distize, d)
-    return NamedDist{N,typeof(dd)}(dd)
+    return NamedDist{N, typeof(dd)}(dd)
 end
 
-NamedDist(;kwargs...) = NamedDist((;kwargs...))
+NamedDist(; kwargs...) = NamedDist((; kwargs...))
 
 function Base.show(io::IO, d::NamedDist{N}) where {N}
     dists = getfield(d, :dists)
-    if length(N) < 4
+    return if length(N) < 4
         show(io, NamedTuple{N}(getfield(d, :dists)))
     else
         println(io, "($(N[1]) = $(dists[1]), $(N[2]) = $(dists[2]), $(N[3]) = $(dists[3]), ...)")
@@ -102,27 +102,27 @@ _distize(d::NamedTuple{N}) where {N} = NamedDist(NamedTuple{N}(map(_distize, d))
 function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{N}) where {N}
     vt = values(x)
     dists = getfield(d, :dists)
-    sum(map((dist, acc) -> Dists.logpdf(dist, acc), dists, vt))
+    return sum(map((dist, acc) -> Dists.logpdf(dist, acc), dists, vt))
 end
 
-function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{M}) where {N,M}
+function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{M}) where {N, M}
     xsub = select(x, N)
     return Dists.logpdf(d, xsub)
 end
 
 function Dists.rand(rng::AbstractRNG, d::NamedDist{N}) where {N}
-    return NamedTuple{N}(map(x->rand(rng, x), getfield(d, :dists)))
+    return NamedTuple{N}(map(x -> rand(rng, x), getfield(d, :dists)))
 end
 
 function Dists.rand(rng::AbstractRNG, d::NamedDist{Na}, n::Int) where {Na}
-    map(1:n) do _
+    return map(1:n) do _
         rand(rng, d)
     end
 end
 
 
 function Dists.rand(rng::AbstractRNG, d::NamedDist{Na}, n::Dims) where {Na}
-    map(CartesianIndices(n)) do I
+    return map(CartesianIndices(n)) do I
         rand(rng, d)
     end
 end

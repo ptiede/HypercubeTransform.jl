@@ -6,10 +6,10 @@ using Test
 
 @testset "Soss" begin
     m1 = @model begin
-        a~Dists.Normal()
-        b~Dists.Uniform()
-        c~Dists.Gamma()
-        return a*b/c
+        a ~ Dists.Normal()
+        b ~ Dists.Uniform()
+        c ~ Dists.Gamma()
+        return a * b / c
     end
 
     m2 = @model m1 begin
@@ -17,7 +17,7 @@ using Test
         y ~ Dists.Normal(z)
     end
 
-    h2 = ascube(m2(m1=m1(),)|(y=1.0,))
+    h2 = ascube(m2(m1 = m1()) | (y = 1.0,))
     h1 = ascube(m1())
     @test dimension(h2) == dimension(h1)
     pos = [0.5, 0.5, 0.5, 0.5]

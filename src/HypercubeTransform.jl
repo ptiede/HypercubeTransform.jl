@@ -34,10 +34,10 @@ include("component_transform.jl")
     pos = [0.5, 0.5, 0.5, 0.5, 0.1]
 
     tc = ascube((a, b, c, d))
-    nc = ascube((;a,b, c, d))
+    nc = ascube((; a, b, c, d))
 
-    tf = asflat((a,b,c,d))
-    nf = asflat((;a,b,c,d))
+    tf = asflat((a, b, c, d))
+    nf = asflat((; a, b, c, d))
 
     pt = transform(tc, pos)
     pn = transform(nc, pos)
@@ -48,7 +48,7 @@ end
 
 
 #function __init__()
- #   @require Soss="8ce77f84-9b61-11e8-39ff-d17a774bf41c" include("soss.jl")
+#   @require Soss="8ce77f84-9b61-11e8-39ff-d17a774bf41c" include("soss.jl")
 #end
 
 end #module

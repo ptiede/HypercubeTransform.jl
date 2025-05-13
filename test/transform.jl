@@ -40,7 +40,7 @@ end
 end
 
 @testset "Dirichlet" begin
-    d = Dists.Dirichlet([1.0,1.0,0.5])
+    d = Dists.Dirichlet([1.0, 1.0, 0.5])
     a = Dists.Normal()
     dc = ascube(d)
     pos = rand(2)
@@ -50,30 +50,30 @@ end
 
     p = rand(2, 10_000_00)
     x = transform.(Ref(dc), eachcol(p))
-    @test isapprox(mean(x), mean(d), atol=1e-3)
+    @test isapprox(mean(x), mean(d), atol = 1.0e-3)
 
     dad = ascube((a, d))
-    @inferred transform(dad, [0.5,0.5,0.5])
+    @inferred transform(dad, [0.5, 0.5, 0.5])
     pad = rand(3, 50_000_00)
     xad = transform.(Ref(dad), eachcol(pad))
     mN = mean(first.(xad))
     mD = mean(last.(xad))
-    @test isapprox(mN, mean(a), atol=1e-2)
-    @test isapprox(mD, mean(d), atol=1e-2)
+    @test isapprox(mN, mean(a), atol = 1.0e-2)
+    @test isapprox(mD, mean(d), atol = 1.0e-2)
 
     dda = ascube((d, a))
-    @inferred transform(dda, [0.5,0.5,0.5])
+    @inferred transform(dda, [0.5, 0.5, 0.5])
     pda = rand(3, 100_000_00)
     xda = transform.(Ref(dda), eachcol(pda))
     mN = mean(last.(xda))
     mD = mean(first.(xda))
-    @test isapprox(mN, mean(a), atol=1e-2)
-    @test isapprox(mD, mean(d), atol=1e-2)
+    @test isapprox(mN, mean(a), atol = 1.0e-2)
+    @test isapprox(mD, mean(d), atol = 1.0e-2)
 
     tf = asflat(d)
     x = randn(dimension(tf))
     y = transform(tf, x)
-    @test length(y) == dimension(tf)+1
+    @test length(y) == dimension(tf) + 1
     @test inverse(tf, y) ≈ x
 end
 
@@ -105,8 +105,8 @@ end
     s = rand(2, 10_000_000)
     p = transform.(Ref(tc), eachcol(s))
 
-    @test isapprox(mean(p), ones(2), atol=5*2/sqrt(10_000_000))
-    @test isapprox(cov(p), [ 2.0 0.1; 0.1 2.0], atol=50/sqrt(10_000_000))
+    @test isapprox(mean(p), ones(2), atol = 5 * 2 / sqrt(10_000_000))
+    @test isapprox(cov(p), [ 2.0 0.1; 0.1 2.0], atol = 50 / sqrt(10_000_000))
 
 end
 
