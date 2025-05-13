@@ -3,7 +3,7 @@
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ptiede.github.io/HypercubeTransform.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://ptiede.github.io/HypercubeTransform.jl/dev)
 [![Build Status](https://github.com/ptiede/HypercubeTransform.jl/workflows/CI/badge.svg)](https://github.com/ptiede/HypercubeTransform.jl/actions)
-[![codecov](https://codecov.io/gh/ptiede/HypercubeTransform.jl/graph/badge.svg?token=1FIQV6P5ZJ)](https://codecov.io/gh/ptiede/HypercubeTransform.jl)[![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
+[![codecov](https://codecov.io/gh/ptiede/HypercubeTransform.jl/graph/badge.svg?token=1FIQV6P5ZJ)](https://codecov.io/gh/ptiede/HypercubeTransform.jl)
 [![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
 [![code style: runic](https://img.shields.io/badge/code_style-%E1%9A%B1%E1%9A%A2%E1%9A%BE%E1%9B%81%E1%9A%B2-black)](https://github.com/fredrikekre/Runic.jl)
 
