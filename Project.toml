@@ -19,6 +19,7 @@ Tricks = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 
 [compat]
 ArgCheck = "2"
+ComponentArrays = "0.15"
 ChainRulesCore = "1"
 Distributions = "0.24,0.25"
 DocStringExtensions = "0.7,0.8,0.9"
