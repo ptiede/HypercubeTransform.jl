@@ -55,6 +55,7 @@ end
     @test size(rand(d1, 2)) == (2,)
     rand(d1, 20, 21)
     @test Dists.logpdf(d1, x1) ≈ Dists.logpdf(d1.a, x1.a) + Dists.logpdf(d1.b, x1.b) + Dists.logpdf(d1.c, x1.c)
+    @test length(d1) == 3
 
     dists = getfield(d1, :dists)
     xt = (b = 0.5, a = 1.0, c = [-0.5, 0.6])
@@ -70,7 +71,7 @@ end
     # @inferred TV.transform(tc, rand(dimension(tc)))
     show(d1)
     show(d2)
-
+    @test length(d2) == 1 + 1 + 1 + 2 + 3
 end
 
 @testset "TupleDist" begin

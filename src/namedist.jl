@@ -44,7 +44,7 @@ end
 
 Base.getproperty(d::NamedDist{N}, s::Symbol) where {N} = getproperty(NamedTuple{N}(getfield(d, :dists)), s)
 Base.propertynames(::NamedDist{N}) where {N} = N
-Base.length(::NamedDist{N}) where {N} = length(N)
+Base.length(d::NamedDist{N}) where {N} = reduce(+, map(length, getfield(d, :dists)))
 
 """
     NamedDist(d::NamedTuple{N})
