@@ -46,7 +46,7 @@ end
 
 @testset "NamedDist" begin
     d1 = NamedDist((a = Dists.Normal(), b = Dists.Uniform(), c = Dists.MvNormal(ones(2))))
-    @test length(d1) == 3
+    @test length(d1) == 4
     @test propertynames(d1) == (:a, :b, :c)
     @test d1.a == Dists.Normal()
     x1 = rand(d1)
