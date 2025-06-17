@@ -24,7 +24,6 @@ ascube( (α = Uniform(), β = Normal()) )
 function ascube end
 
 
-
 struct ScalarHC{D} <: AbstractHypercubeTransform
     dist::D
     ScalarHC(d) = new{typeof(d)}(d)
