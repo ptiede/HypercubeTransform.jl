@@ -1,7 +1,7 @@
 name = "HypercubeTransform"
 uuid = "9ec9aee3-0fd3-44c2-8e61-a50acc66f3c8"
 authors = ["ptiede <ptiede91@gmail.com> and contributors"]
-version = "0.4.4"
+version = "0.4.5"
 
 [deps]
 ArgCheck = "dce04be8-c92d-5529-be00-80e4d2c0e197"
@@ -28,7 +28,7 @@ PDMats = "0.11"
 PrecompileTools = "1"
 TransformVariables = "0.8"
 Tricks = "0.1"
-julia = "1.6"
+julia = "1.10"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
