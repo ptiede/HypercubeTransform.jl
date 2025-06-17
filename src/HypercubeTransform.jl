@@ -25,6 +25,7 @@ include("asflat.jl")
 include("namedist.jl")
 include("componentdist.jl")
 include("component_transform.jl")
+include("delta.jl")
 
 @setup_workload begin
     a = Dists.Normal()

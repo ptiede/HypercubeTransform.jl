@@ -1,7 +1,7 @@
 export NamedDist, TupleDist
 
 """
-    TupleDist(d::NTuple{N, <:Dists.Distribution})
+    TupleDist(d::NTuple{N, <:Distribution})
 
 Creates a multivariate distribution whose backing is a tuple. This is useful for
 small inhomogenous distributions.
