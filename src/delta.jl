@@ -1,5 +1,25 @@
 export DeltaDist
 
+"""
+    DeltaDist(x0)
+
+Creates a Delta (aka Dirac Delta) distribution centered at the point `x0`.
+This distribution is typically used to represent a fixed value in the parameter space
+and is often used in Bayesian inference to represent a parameter that is known with certainty.
+
+## Warning
+The `logpdf` always returns zero. This is because its purpose is to represent a fixed value in 
+the parameter space, and thus we do not want it to directly compute to the probability density of the posterior. 
+
+## Example
+```julia-repl
+julia> d = DeltaDist(5.0)
+julia> rand(d) == 5.0
+true
+julia> logpdf(d, 0.0)
+0.0
+```
+"""
 struct DeltaDist{T} <: Dists.ContinuousMultivariateDistribution
     x0::T
 end

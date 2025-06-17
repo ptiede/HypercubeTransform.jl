@@ -4,7 +4,8 @@ export NamedDist, TupleDist
     TupleDist(d::NTuple{N, <:Distribution})
 
 Creates a multivariate distribution whose backing is a tuple. This is useful for
-small inhomogenous distributions.
+small inhomogenous distributions, i.e. where each element of the tuple is a different
+distribution.
 """
 struct TupleDist{N, D <: NTuple{N, Dists.Distribution}} <: Dists.ContinuousMultivariateDistribution
     dists::D
