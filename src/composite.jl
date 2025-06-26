@@ -1,4 +1,4 @@
-const NCube{N} = Tuple{Vararg{AbstractHypercubeTransform, N}}
+const NCube{N} = Tuple{Vararg{TV.AbstractTransform, N}}
 
 struct TupleHC{T} <: VectorHC
     transformations::T
