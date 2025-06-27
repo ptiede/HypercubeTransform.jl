@@ -57,6 +57,7 @@ ascube(::NamedTuple{()}) = EmptyNamedTuple()
 inverse_eltype(::EmptyNamedTuple, ::NamedTuple{}) = Float64
 _step_transform(c::EmptyNamedTuple, p::AbstractVector, index) = (;), index
 _step_inverse!(y::AbstractVector, index, c::EmptyNamedTuple, ::NamedTuple{}) = index
+has_quantile(::EmptyNamedTuple) = NoQuant()
 
 """
     $(FUNCTIONNAME)(c::AbstractHypercubeTransform, p)

@@ -122,6 +122,20 @@ end
         inverse(tf, pf)
         inverse(tc, pc)
 
+        de = NamedDist()
+        tf = asflat(de)
+        tc = ascube(de)
+
+        xf = randn(dimension(tf))
+        xc = rand(dimension(tc))
+
+        pf = transform(tf, xf)
+        pc = transform(tc, xc)
+
+        inverse(tf, pf)
+        inverse(tc, pc)
+
+
         d1 = TupleDist((TupleDist(), Dists.Normal(), NamedDist()))
         tf = asflat(d1)
         tc = ascube(d1)
