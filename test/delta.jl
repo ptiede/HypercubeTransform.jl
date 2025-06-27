@@ -1,4 +1,7 @@
 using Test
+using HypercubeTransform
+import Distributions as Dists
+using Random
 @testset "DeltaDist" begin
 
     @testset "DeltaDist creation" begin
