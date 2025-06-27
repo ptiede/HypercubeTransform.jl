@@ -16,9 +16,7 @@ using Test
         #"soss"
     ]
     res = map(tests) do t
-        @eval module $(Symbol("Test_", t))
-        include($t * ".jl")
-        end
+        include("$t.jl")
         return
     end
 
