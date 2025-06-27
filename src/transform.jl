@@ -46,14 +46,15 @@ TV._inverse_eltype_tuple(::Tuple{}, ::Tuple{}) = Union{}
 struct EmptyTuple <: AbstractHypercubeTransform end
 dimension(::EmptyTuple) = 0
 ascube(::Tuple{}) = EmptyTuple()
-inverse_eltype(::EmptyTuple, ::Tuple{}) = Tuple{}
+inverse_eltype(::EmptyTuple, ::Tuple{}) = Float64
 _step_transform(c::EmptyTuple, p::AbstractVector, index) = (), index
 _step_inverse!(y::AbstractVector, index, c::EmptyTuple, ::Tuple{}) = index
+has_quantile(::EmptyTuple) = NoQuant()
 
 struct EmptyNamedTuple <: AbstractHypercubeTransform end
 dimension(::EmptyNamedTuple) = 0
 ascube(::NamedTuple{()}) = EmptyNamedTuple()
-inverse_eltype(::EmptyNamedTuple, ::NamedTuple{}) = @NamedTuple{}
+inverse_eltype(::EmptyNamedTuple, ::NamedTuple{}) = Float64
 _step_transform(c::EmptyNamedTuple, p::AbstractVector, index) = (;), index
 _step_inverse!(y::AbstractVector, index, c::EmptyNamedTuple, ::NamedTuple{}) = index
 
@@ -84,6 +85,16 @@ end
 function _transform(::NoQuant, c::AbstractHypercubeTransform, x)
     throw("No quantile for distribution $(c.dist), implement transform manually")
 end
+
+function _transform(::NoQuant, c::EmptyNamedTuple, x)
+    return (;)
+end
+
+function _transform(::NoQuant, c::EmptyTuple, x)
+    return ()
+end
+
+
 
 function _step_transform(c::ScalarHC, x::AbstractVector, index)
     return transform(c, x[index]), index + 1
