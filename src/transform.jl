@@ -95,7 +95,6 @@ function _transform(::NoQuant, c::EmptyTuple, x)
 end
 
 
-
 function _step_transform(c::ScalarHC, x::AbstractVector, index)
     return transform(c, x[index]), index + 1
 end
