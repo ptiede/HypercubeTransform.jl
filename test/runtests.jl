@@ -12,7 +12,7 @@ using Test
     tests = [
         "transform",
         "composite",
-        "delta"
+        "delta",
         #"soss"
     ]
     res = map(tests) do t
