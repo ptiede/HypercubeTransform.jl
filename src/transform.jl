@@ -40,10 +40,22 @@ dimension(::ScalarHC) = 1
 dist(d::ScalarHC) = d.dist
 ascube(d::Dists.UnivariateDistribution) = ScalarHC(d)
 
+# I should upstream this
+TV._inverse_eltype_tuple(::Tuple{}, ::Tuple{}) = Union{}
+
 struct EmptyTuple <: AbstractHypercubeTransform end
 dimension(::EmptyTuple) = 0
 ascube(::Tuple{}) = EmptyTuple()
 inverse_eltype(::EmptyTuple, ::Tuple{}) = Tuple{}
+_step_transform(c::EmptyTuple, p::AbstractVector, index) = (), index
+_step_inverse!(y::AbstractVector, index, c::EmptyTuple, ::Tuple{}) = index
+
+struct EmptyNamedTuple <: AbstractHypercubeTransform end
+dimension(::EmptyNamedTuple) = 0
+ascube(::NamedTuple{()}) = EmptyNamedTuple()
+inverse_eltype(::EmptyNamedTuple, ::NamedTuple{}) = @NamedTuple{}
+_step_transform(c::EmptyNamedTuple, p::AbstractVector, index) = (;), index
+_step_inverse!(y::AbstractVector, index, c::EmptyNamedTuple, ::NamedTuple{}) = index
 
 """
     $(FUNCTIONNAME)(c::AbstractHypercubeTransform, p)

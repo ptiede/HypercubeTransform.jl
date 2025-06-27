@@ -70,6 +70,35 @@ end
     show(d1)
     show(d2)
     @test length(d2) == 1 + 1 + 1 + 2 + 3
+
+    @testset "EmptyNamedTuple" begin 
+        d1 = NamedDist((a = NamedDist(), b = Dists.Normal(), c = TupleDist()))
+        tf = asflat(d1)
+        tc = ascube(d1)
+
+        xf = randn(dimension(tf))
+        xc = rand(dimension(tc))
+        @test length(xf) == dimension(tf)
+        @test length(xc) == dimension(tc)
+        pf = transform(tf, xf)
+        pc = transform(tc, xc)
+
+        @test pf.a === (;)
+        @test pc.a === (;)
+        @test pf.c === ()
+        @test pc.c === ()
+
+        @test inverse(tf, pf) ≈ xf
+        @test inverse(tc, pc) ≈ xc
+
+        @test pf.b ≈ xf[1]
+        @test pc.b ≈ Dists.quantile(Dists.Normal(), xc[1])
+
+        
+        @test Dists.logpdf(d1, pf) ≈ Dists.logpdf(d1.b, pf.b)
+
+    end
+
 end
 
 @testset "TupleDist" begin
@@ -77,6 +106,35 @@ end
     @test length(d1) == 3
     @test length(rand(d1, 2)) == 2
     @test size(rand(d1, 2, 3)) == (2, 3)
+
+        @testset "EmptyTuple" begin 
+        d1 = TupleDist((TupleDist(), Dists.Normal(), NamedDist()))
+        tf = asflat(d1)
+        tc = ascube(d1)
+
+        xf = randn(dimension(tf))
+        xc = rand(dimension(tc))
+        @test length(xf) == dimension(tf)
+        @test length(xc) == dimension(tc)
+        pf = transform(tf, xf)
+        pc = transform(tc, xc)
+
+        @test pf[1] === ()
+        @test pc[1] === ()
+        @test pf[3] === (;)
+        @test pc[3] === (;)
+
+        @test inverse(tf, pf) ≈ xf
+        @test inverse(tc, pc) ≈ xc
+
+        @test pf[2] ≈ xf[1]
+        @test pc[2] ≈ Dists.quantile(Dists.Normal(), xc[1])
+
+        
+        @test Dists.logpdf(d1, pf) ≈ Dists.logpdf(d1.dists[2], pf[2])
+
+    end
+
 end
 
 @testset "ComponentDist" begin

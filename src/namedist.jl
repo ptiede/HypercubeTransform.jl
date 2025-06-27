@@ -10,6 +10,7 @@ distribution.
 struct TupleDist{N, D <: NTuple{N, Dists.Distribution}} <: Dists.ContinuousMultivariateDistribution
     dists::D
 end
+TupleDist() = TupleDist(())
 
 Base.length(::TupleDist{N}) where {N} = N
 
@@ -17,6 +18,8 @@ function Dists.logpdf(d::TupleDist{N}, x::Tuple) where {N}
     dists = d.dists
     return sum(map((dist, acc) -> Dists.logpdf(dist, acc), dists, x))
 end
+
+Dists.logpdf(::TupleDist{0}, ::Tuple{}) = 0.0
 
 function Dists.rand(rng::AbstractRNG, d::TupleDist{N}) where {N}
     return ntuple(i -> rand(rng, d.dists[i]), N)
@@ -110,6 +113,9 @@ function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{M}) where {N, M}
     xsub = select(x, N)
     return Dists.logpdf(d, xsub)
 end
+
+# Special case the empty tuple
+Dists.logpdf(d::NamedDist{()}, x::NamedTuple{()}) = 0.0
 
 function Dists.rand(rng::AbstractRNG, d::NamedDist{N}) where {N}
     return NamedTuple{N}(map(x -> rand(rng, x), getfield(d, :dists)))
