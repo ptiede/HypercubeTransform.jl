@@ -71,7 +71,7 @@ end
     show(d2)
     @test length(d2) == 1 + 1 + 1 + 2 + 3
 
-    @testset "EmptyNamedTuple" begin 
+    @testset "EmptyNamedTuple" begin
         d1 = NamedDist((a = NamedDist(), b = Dists.Normal(), c = TupleDist()))
         tf = asflat(d1)
         tc = ascube(d1)
@@ -94,7 +94,7 @@ end
         @test pf.b ≈ xf[1]
         @test pc.b ≈ Dists.quantile(Dists.Normal(), xc[1])
 
-        
+
         @test Dists.logpdf(d1, pf) ≈ Dists.logpdf(d1.b, pf.b)
 
     end
@@ -107,7 +107,7 @@ end
     @test length(rand(d1, 2)) == 2
     @test size(rand(d1, 2, 3)) == (2, 3)
 
-        @testset "EmptyTuple" begin 
+    @testset "EmptyTuple" begin
         d1 = TupleDist((TupleDist(), Dists.Normal(), NamedDist()))
         tf = asflat(d1)
         tc = ascube(d1)
@@ -130,7 +130,7 @@ end
         @test pf[2] ≈ xf[1]
         @test pc[2] ≈ Dists.quantile(Dists.Normal(), xc[1])
 
-        
+
         @test Dists.logpdf(d1, pf) ≈ Dists.logpdf(d1.dists[2], pf[2])
 
     end
