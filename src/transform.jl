@@ -97,15 +97,6 @@ function _step_inverse!(y::AbstractVector, index, c::ScalarHC, x::Real)
     return index + 1
 end
 
-function _step_transform(h::EmptyTuple, p::AbstractVector, index)
-    return (), index
-end
-
-function _step_inverse!(y::AbstractVector, index, c::EmptyTuple, ::Tuple{})
-    return index
-end
-
-
 abstract type VectorHC <: AbstractHypercubeTransform end
 
 function transform(c::VectorHC, x::AbstractVector)
