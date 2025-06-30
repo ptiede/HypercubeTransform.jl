@@ -45,7 +45,7 @@ function _transform_tuple(x::AbstractVector, index, ts)
 end
 
 _inverse_eltype_tuple(ts::NCube, ys::Tuple) =
-    reduce(promote_type, map(((t, y),) -> inverse_eltype(t, y), zip(ts, ys)))
+    reduce(promote_type, map((t, y) -> inverse_eltype(t, y), ts, ys))
 
 function _inverse!_tuple(x::AbstractVector, index, ts::NCube, ys::Tuple)
     for (t, y) in zip(ts, ys)
