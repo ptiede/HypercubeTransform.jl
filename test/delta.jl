@@ -51,5 +51,36 @@ using Random
         out = transform(t, rand(dimension(t)))
         @test out[1] == d1.x0
         @test out[2] == d2.x0
+
+        t = ascube(dt)
+        x = rand(dimension(t))
+        out = transform(t, x)
+        @test out[1] == d1.x0
+        @test out[2] == d2.x0
+        @test x ≈ inverse(t, out)
+
+        tf = asflat(d1)
+        tc = ascube(d1)
+        out_f = transform(tf, rand(dimension(tf)))
+        out_c = transform(tc, rand(dimension(tc)))
+
+        @test out_f == d1.x0
+        @test out_c == d1.x0
+
+        @test inverse(tf, out_f) == Float64[]
+        @test inverse(tc, out_c) == Float64[]
+
+        tf = asflat(d2)
+        tc = ascube(d2)
+        out_f = transform(tf, rand(dimension(tf)))
+        out_c = transform(tc, rand(dimension(tc)))
+
+        @test out_f == d2.x0
+        @test out_c == d2.x0
+
+        @test inverse(tf, out_f) == Float64[]
+        @test inverse(tc, out_c) == Float64[]
+
+
     end
 end

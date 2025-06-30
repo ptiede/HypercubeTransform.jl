@@ -56,3 +56,15 @@ end
 
 asflat(d::DeltaDist) = TV.Constant(d.x0)
 ascube(d::DeltaDist) = TV.Constant(d.x0)
+
+function _step_transform(t::TransformVariables.Constant, x::Vector{Float64}, i::Int64)
+   y, _, index2 = TV.transform_with(TV.NoLogJac(), t, x, i)
+   return y, index2
+end
+
+function _step_inverse!(x, index, t::TransformVariables.Constant, y)
+   index2 = TV.inverse_at!(x, index, t, y)
+   return index2
+end
+
+
