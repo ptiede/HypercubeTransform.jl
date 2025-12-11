@@ -101,7 +101,7 @@ end
 
 function asflat(d::ComponentDist{N}) where {N}
     dists = getfield(d, :dists)
-    trfs = asflat(NamedTuple{N}(fieldvalues(dists))).transformations
+    trfs = TV._inner(asflat(NamedTuple{N}(fieldvalues(dists))))
     return TV.as(getfield(d, :axis), trfs)
 end
 

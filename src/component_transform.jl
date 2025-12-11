@@ -24,7 +24,7 @@ function TV.transform_with(flag::TV.LogJacFlag, tt::ComponentTransform, x::Abstr
     return out, ℓ, index2
 end
 
-function TV.inverse_eltype(::ComponentTransform, ::ComponentVector{T}) where {T}
+function TV.inverse_eltype(::ComponentTransform, ::Type{<:ComponentVector{T}}) where {T}
     return T
 end
 
