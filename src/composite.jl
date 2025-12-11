@@ -44,8 +44,8 @@ function _transform_tuple(x::AbstractVector, index, ts)
     return (yfirst, yrest...), index2
 end
 
-_inverse_eltype_tuple(ts::NCube, ys::Tuple) =
-    reduce(promote_type, map((t, y) -> inverse_eltype(t, y), ts, ys))
+# _inverse_eltype_tuple(ts::NCube, ys::Tuple) =
+#     reduce(promote_type, map((t, y) -> inverse_eltype(t, y), ts, ys))
 
 function _inverse!_tuple(x::AbstractVector, index, ts::NCube, ys::Tuple)
     for (t, y) in zip(ts, ys)
@@ -55,10 +55,8 @@ function _inverse!_tuple(x::AbstractVector, index, ts::NCube, ys::Tuple)
 end
 
 
-function TV.inverse_eltype(tt::TupleHC{<:Tuple}, y::Tuple)
-    transformations = tt.transformations
-    @argcheck length(transformations) == length(y)
-    return _inverse_eltype_tuple(transformations, y)
+function TV.inverse_eltype(tt::TupleHC, y::Type)
+    return TV.inverse_eltype(TV.TransformTuple(tt.transformations), y)
 end
 
 
@@ -79,11 +77,11 @@ function _step_transform(c::TupleHC{<:NamedTuple{N}}, x, index) where {N}
     return NamedTuple{keys(transformations)}(y), index′
 end
 
-function TV.inverse_eltype(tt::TupleHC{<:NamedTuple}, y::NamedTuple)
-    transformations = tt.transformations
-    @argcheck keys(transformations) == keys(y)
-    return _inverse_eltype_tuple(values(transformations), values(y))
-end
+# function TV.inverse_eltype(tt::TupleHC{<:NamedTuple}, y::NamedTuple)
+#     transformations = tt.transformations
+#     @argcheck keys(transformations) == keys(y)
+#     return _inverse_eltype_tuple(values(transformations), values(y))
+# end
 
 function _step_inverse!(x::AbstractVector, index, tt::TupleHC{<:NamedTuple}, y::NamedTuple)
     transformations = tt.transformations

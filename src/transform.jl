@@ -29,6 +29,8 @@ struct ScalarHC{D} <: AbstractHypercubeTransform
     ScalarHC(d) = new{typeof(d)}(d)
 end
 
+TV.inverse_eltype(::ScalarHC, ::Type{T}) where {T} = TV._ensure_float(T)
+
 
 # Trait to decide whether a quantile function is defined. This should be compile time right?
 struct HasQuant end
@@ -40,8 +42,8 @@ dimension(::ScalarHC) = 1
 dist(d::ScalarHC) = d.dist
 ascube(d::Dists.UnivariateDistribution) = ScalarHC(d)
 
-# I should upstream this
-TV._inverse_eltype_tuple(::Tuple{}, ::Tuple{}) = Union{}
+# # I should upstream this
+# TV._inverse_eltype_tuple(::Tuple{}, ::Tuple{}) = Union{}
 
 struct EmptyTuple <: AbstractHypercubeTransform end
 dimension(::EmptyTuple) = 0
@@ -130,7 +132,7 @@ end
 ascube(d::Union{Dists.MultivariateDistribution, Dists.Matrixvariate}) = ArrayHC(d)
 dist(d::ArrayHC) = d.dist
 
-function inverse_eltype(::ArrayHC, x::AbstractArray{T}) where {T}
+function inverse_eltype(::ArrayHC, x::Type{<:AbstractArray{T}}) where {T}
     return float(T)
 end
 
@@ -237,24 +239,3 @@ function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.Dirichlet, 
     end
     return index
 end
-
-
-# ascube(d::Union{MT.For, MT.ProductMeasure}) = ArrayHC(d)
-
-
-# function _step_transform(h::ArrayHC{S,M}, p::AbstractVector, index) where {S <: Union{MT.ProductMeasure, MT.For}, M}
-#     out = Vector{eltype(p)}(undef, dimension(h))
-#     m = MT.marginals(dist(h))
-#     for (i,mi) in enumerate(m)
-#         out[i] = first(_step_transform(ascube(mi), p, index-1+i))
-#     end
-#     return out, index+dimension(h)
-# end
-
-# function _step_inverse!(x::AbstractVector, index, c::ArrayHC{S, M}, y) where {S<: Union{MT.ProductMeasure, MT.For}, M}
-#     m = MT.marginals(dist(c))
-#     for (mi, yy) in zip(m,vec(y))
-#         index = _step_inverse!(x, index, mi, yy)
-#     end
-#     return index
-# end
