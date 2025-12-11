@@ -37,4 +37,3 @@ end
 @inline function _inverse(::NoCDF, c::AbstractHypercubeTransform, x)
     throw("No cdf for distribution $(c.dist), implement _inverse manually")
 end
-
