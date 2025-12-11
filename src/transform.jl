@@ -48,7 +48,7 @@ ascube(d::Dists.UnivariateDistribution) = ScalarHC(d)
 struct EmptyTuple <: AbstractHypercubeTransform end
 dimension(::EmptyTuple) = 0
 ascube(::Tuple{}) = EmptyTuple()
-inverse_eltype(::EmptyTuple, ::Tuple{}) = Float64
+inverse_eltype(::EmptyTuple, ::Type{Tuple{}}) = Bool
 _step_transform(c::EmptyTuple, p::AbstractVector, index) = (), index
 _step_inverse!(y::AbstractVector, index, c::EmptyTuple, ::Tuple{}) = index
 has_quantile(::EmptyTuple) = NoQuant()
@@ -56,7 +56,7 @@ has_quantile(::EmptyTuple) = NoQuant()
 struct EmptyNamedTuple <: AbstractHypercubeTransform end
 dimension(::EmptyNamedTuple) = 0
 ascube(::NamedTuple{()}) = EmptyNamedTuple()
-inverse_eltype(::EmptyNamedTuple, ::NamedTuple{}) = Float64
+inverse_eltype(::EmptyNamedTuple, ::Type{@NamedTuple{}}) = Bool
 _step_transform(c::EmptyNamedTuple, p::AbstractVector, index) = (;), index
 _step_inverse!(y::AbstractVector, index, c::EmptyNamedTuple, ::NamedTuple{}) = index
 has_quantile(::EmptyNamedTuple) = NoQuant()
