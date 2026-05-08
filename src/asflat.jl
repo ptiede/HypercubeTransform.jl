@@ -1,5 +1,4 @@
 using TransformVariables
-using NamedTupleTools
 
 """
     asflat(d::Distribution)
@@ -35,8 +34,8 @@ end
     return as(Vector, asflat(first(d.v)), length(d.v))
 end
 
-@inline asflat(d::NamedTuple) = as(prototype(d)(asflat.(fieldvalues(d))))
-@inline asflat(d::Tuple) = as(asflat.(d))
+@inline asflat(d::NamedTuple{N}) where {N} = as(NamedTuple{N}(map(asflat, values(d))))
+@inline asflat(d::Tuple) = as(map(asflat, d))
 
 # using Bijectors: bijector, NamedBijector, with_logabsdet_jacobian
 # import Bijectors

@@ -109,8 +109,10 @@ function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{N}) where {N}
     return sum(map((dist, acc) -> Dists.logpdf(dist, acc), dists, vt))
 end
 
+
+
 function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{M}) where {N, M}
-    xsub = select(x, N)
+    xsub = NamedTuple{N}(x)
     return Dists.logpdf(d, xsub)
 end
 

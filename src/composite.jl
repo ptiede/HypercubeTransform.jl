@@ -22,7 +22,7 @@ function ascube(dists::NamedTuple{N, <:Tuple{Vararg{Union{Dists.Distribution}, M
 end
 dimension(tt::TupleHC) = tt.dimension
 
-@inline ascube(d::NamedTuple) = ascube(prototype(d)(ascube.(fieldvalues(d))))
+@inline ascube(d::NamedTuple{N}) where {N} = ascube(NamedTuple{N}(map(ascube, values(d))))
 
 
 """
