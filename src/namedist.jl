@@ -110,7 +110,6 @@ function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{N}) where {N}
 end
 
 
-
 function Dists.logpdf(d::NamedDist{N}, x::NamedTuple{M}) where {N, M}
     xsub = NamedTuple{N}(x)
     return Dists.logpdf(d, xsub)
