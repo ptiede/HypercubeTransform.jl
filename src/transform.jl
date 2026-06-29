@@ -156,7 +156,7 @@ function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.Product, M}
     return index
 end
 
-function _step_transform(h::ArrayHC{<:Dists.MvNormal, M}, p::AbstractVector, index) where {M}
+function _step_transform(h::ArrayHC{<:Dists.MvNormal{T}, M}, p::AbstractVector, index) where {T, M}
     out = Vector{eltype(p)}(undef, dimension(h))
     d = dist(h)
     Σ = d.Σ
@@ -171,7 +171,7 @@ function _step_transform(h::ArrayHC{<:Dists.MvNormal, M}, p::AbstractVector, ind
 end
 
 
-function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.MvNormal, M}, y::AbstractVector) where {M}
+function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.MvNormal{T}, M}, y::AbstractVector) where {T, M}
     d = dist(c)
     Σ = d.Σ
     μ = d.μ
@@ -183,7 +183,7 @@ function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.MvNormal, M
     return index
 end
 
-function _step_transform(h::ArrayHC{<:Dists.DiagNormal, M}, p::AbstractVector, index) where {M}
+function _step_transform(h::ArrayHC{<:Dists.DiagNormal{T}, M}, p::AbstractVector, index) where {T, M}
     out = Vector{eltype(p)}(undef, dimension(h))
     d = dist(h)
     Σ = d.Σ.diag
@@ -194,7 +194,7 @@ function _step_transform(h::ArrayHC{<:Dists.DiagNormal, M}, p::AbstractVector, i
     return out, index + dimension(h)
 end
 
-function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.DiagNormal, M}, y::AbstractVector) where {M}
+function _step_inverse!(x::AbstractVector, index, c::ArrayHC{<:Dists.DiagNormal{T}, M}, y::AbstractVector) where {T, M}
     d = dist(c)
     Σ = d.Σ.diag
     μ = d.μ
